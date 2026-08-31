@@ -1,0 +1,2907 @@
+<!doctype html>
+<html lang="en">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BESPOKE BY PAUL — the cloth on the form</title>
+
+<link rel="preload" as="font" type="font/woff2" href="fonts/source-serif-4-400.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/inter-400.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/inter-500.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/inter-600.woff2" crossorigin>
+<style>
+@font-face { font-family:"Source Serif 4"; font-style:normal; font-weight:400;
+             font-display:optional; src:url("fonts/source-serif-4-400.woff2") format("woff2"); }
+@font-face { font-family:"Inter"; font-style:normal; font-weight:400;
+             font-display:optional; src:url("fonts/inter-400.woff2") format("woff2"); }
+@font-face { font-family:"Inter"; font-style:normal; font-weight:500;
+             font-display:optional; src:url("fonts/inter-500.woff2") format("woff2"); }
+@font-face { font-family:"Inter"; font-style:normal; font-weight:600;
+             font-display:optional; src:url("fonts/inter-600.woff2") format("woff2"); }
+</style>
+
+<script src="house-line.js"></script>
+<script>
+  (function () {
+    var GRACE = 4000;           
+    var SLOW_GRACE = 20000;     
+    var done = false;           
+    var spoke = false;          
+    var timer = 0;
+    function post(state, why) {
+      var m = { type: 'pt3d', state: state, ptReady: state === 'ready' ? 1 : 0 };
+      if (state === 'ready') m.v = 2;
+      if (why) m.why = why;
+      try { if (parent !== window) parent.postMessage(m, '*'); } catch (e) {   }
+    }
+    window.PT3D_READY = function () {
+      if (done) return;
+      done = true; clearTimeout(timer);
+      post('ready');
+    };
+    window.PT3D_BOOTED = function () {
+      if (done || spoke) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () { fail('timeout'); }, SLOW_GRACE);
+      post('booted');
+    };
+    function fail(why) {
+      if (done || spoke) return;
+      spoke = true; clearTimeout(timer);
+      post('failed', why);
+    }
+    window.PT3D_FAILED = fail;
+    timer = setTimeout(function () { fail('timeout'); }, GRACE);
+    addEventListener('error', function (e) {
+      var t = e && e.target;
+      if (t && t !== window && t.nodeType === 1) { if (t.tagName === 'SCRIPT') fail('module'); return; }
+      fail('error');
+    }, true);
+    addEventListener('unhandledrejection', function () { fail('rejection'); });
+  })();
+</script>
+<script>
+  document.documentElement.dataset.mood =
+    new URLSearchParams(location.search).get('scene') === 'evening' ? 'evening' : 'studio';
+  if (new URLSearchParams(location.search).get('ground') === 'photo') {
+    document.documentElement.dataset.ground = 'photo';
+  }
+</script>
+<style>
+:root{
+  --ink:#1D1D1D;           
+  --ink-2:#4D4D4D;         
+  --ink-3:#6A6A6A;         
+  --hair:#D3D3D3;          
+  --rule:#858585;          
+  --bg:#FFFFFF;            
+  --book:#F7F7F7;          
+  --recessed:#F4F4F4;      
+  --paper:#FFFFFF;         
+  --focus-ink:#1D1D1D; --focus-out:#FFFFFF;    
+  --focus-w:2px; --focus-gap:2px;
+  --alert:#8C2F22;         
+  --sans:Inter,system-ui,-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Iowan Old Style",Palatino,serif;
+  --accent:#6E1F2E;
+  --t-100:12px; --t-200:14px; --t-300:16px; --t-400:20px; --t-500:28px; --t-600:40px;
+  --t-micro:var(--t-100); --t-label:var(--t-100); --t-fine:var(--t-100);
+  --t-meta:var(--t-200); --t-body:var(--t-300);
+  --t-input:var(--t-300);    
+  --t-sub:var(--t-400); --t-lead:var(--t-500);
+  --measure:56ch;
+  --w-reg:400; --w-med:500; --w-semi:600;
+  --tr-mark:.10em; --tr-caps:.10em; --tr-caps-lg:0; --tr-text:0; --tr-code:.02em;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px;
+  --hdr:72px; --bar:56px; --stack:calc(var(--hdr) + var(--bar));
+  --radius:10px;           
+  --tile:124px; --sel-ring:2px; --sel-gap:3px; --sel-mark:10px; --tap:44px;
+  --vizband:0px;           
+  --cta-h:0px;             
+  --cta-l:0px; --cta-w:100%;    
+  --viz-h:min(52svh,420px);    
+  --chip:96px;                 
+  --scrollpad:calc(var(--stack) + var(--s4));    
+  font-variant-numeric:tabular-nums lining-nums;
+  color-scheme:light;
+  font-synthesis:none;
+}
+@media (max-width:599px){ :root{ --t-500:24px; --t-600:32px; } }
+
+  :root{
+    --room-night:#3D3D3D; 
+    --room:var(--room-night);    
+    --room-ink:#FFFFFF;   
+    --reserve-top:0px; --reserve-bottom:0px;
+    --ring-bw:0px;
+  }
+  :root[data-mood="studio"]{ --room:var(--book); }
+
+  :root{ --room-photo:var(--book); }      
+  :root[data-ground="photo"]{ --room:var(--room-photo); }
+
+  :focus-visible { outline:var(--focus-w) solid var(--focus-ink);
+                   outline-offset:var(--focus-gap); position:relative; }
+  :focus-visible::after { content:''; position:absolute; pointer-events:none;
+                          inset:calc(-1 * (var(--focus-gap) + var(--focus-w) * 2 + var(--ring-bw)));
+                          border:var(--focus-w) solid var(--focus-out); }
+
+  html,body { margin:0; height:100%; overflow:hidden; background:var(--book); }
+  body { display:grid; grid-template-rows:auto minmax(72px,1fr) auto;
+         font:var(--w-reg) var(--t-200)/1.5 var(--sans); color:var(--ink);
+         letter-spacing:var(--tr-text); }
+  canvas { display:block; }
+
+  #topband { grid-row:1; }
+  #stage   { grid-row:2; }
+  #capband { grid-row:3; }
+  #stage { position:relative; overflow:hidden; background:var(--room); min-height:0; }
+  #stage > canvas { position:absolute; left:0; top:0; }
+
+  #stage > canvas:focus-visible { outline:none; }
+  #stage:has(> canvas:focus-visible)::before,
+  #stage:has(> canvas:focus-visible)::after {
+    content:''; position:absolute; pointer-events:none; z-index:2; }
+  #stage:has(> canvas:focus-visible)::after  { inset:0;
+    border:var(--focus-w) solid var(--focus-out); }
+  #stage:has(> canvas:focus-visible)::before { inset:var(--focus-w);
+    border:var(--focus-w) solid var(--focus-ink); }
+
+  #topband { background:var(--book); border-bottom:1px solid var(--rule);
+             padding:var(--s2) var(--s4); padding-top:calc(var(--s2) + var(--reserve-top));
+             display:flex; align-items:center; justify-content:flex-end; gap:var(--s2);
+             flex-wrap:wrap; }
+  #capband { background:var(--book); border-top:1px solid var(--rule);
+             padding:var(--s3) var(--s4); padding-bottom:calc(var(--s3) + var(--reserve-bottom));
+             display:grid; gap:var(--s2); }
+  #capline { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s4); flex-wrap:wrap; }
+
+  #cap { max-width:60ch; letter-spacing:var(--tr-text); color:var(--ink-2); }
+  #cap b { font-weight:var(--w-med); color:var(--ink); }
+  #cap .mut { display:block; color:var(--ink-2); letter-spacing:var(--tr-text); }
+  #cap .book::before { content:'\00a0·\00a0'; }
+  #cap .book:first-child::before { content:none; }
+  #cap .standing { display:block; margin-top:var(--s1); color:var(--ink); letter-spacing:var(--tr-text); }
+
+  #truth { margin:0; color:var(--ink-2); letter-spacing:var(--tr-text); max-width:78ch; }
+
+  #hint { flex:0 0 auto; text-align:right; letter-spacing:var(--tr-text); color:var(--ink-2);
+          background:none; border:0; padding:0; margin:0; cursor:pointer; font:inherit;
+          -webkit-appearance:none; appearance:none;
+          transition:opacity 140ms cubic-bezier(.40,0,1,1); }    
+  #hint[hidden] { display:none; }
+  #hint.going { opacity:0; pointer-events:none; }
+
+  #liningChip { display:none; align-items:center; gap:var(--s2);
+                font:var(--w-med) var(--t-100) var(--sans); letter-spacing:var(--tr-caps); color:var(--ink-2); }
+  #liningChip.on { display:flex; }
+  #liningChip canvas { width:28px; height:28px; display:block; border:1px solid var(--rule); background:var(--book); }
+
+  #zoomui { display:flex; flex-direction:row; gap:var(--s2); margin-right:auto; }
+  #zoomui button {
+    --ring-bw:1px;
+    width:36px; height:36px;
+    border:1px solid transparent; background:none; color:var(--ink-2);    
+    border-radius:var(--radius); font:var(--w-med) var(--t-200) var(--sans);
+    letter-spacing:var(--tr-text); cursor:pointer; }
+  #zoomui button:active { background:var(--ink); color:var(--bg); }
+  #zoomui button:disabled { color:var(--ink-3); cursor:default; }
+
+  #viewui { display:flex; flex-direction:row; gap:var(--s2); }
+  #viewui button {
+    --ring-bw:1px;
+    display:inline-flex; align-items:center; justify-content:center; gap:var(--s2);
+    min-width:var(--tap); height:36px; padding:0 var(--s2);
+    border:1px solid transparent; background:none; color:var(--ink-2);
+    border-radius:var(--radius); font:var(--w-med) var(--t-100) var(--sans);
+    letter-spacing:var(--tr-caps); cursor:pointer; }
+  #viewui button::before {
+    content:""; flex:none;
+    width:var(--sel-mark,10px); height:var(--sel-mark,10px);
+    background:var(--accent); opacity:0;
+    transition:opacity 160ms cubic-bezier(0.35,0,0.15,1); }
+  @media (prefers-reduced-motion:reduce){ #viewui button::before { transition:none; } }
+  #viewui button[aria-checked="true"]::before { opacity:1; }
+  #viewui button { min-height:var(--tap) !important; min-width:var(--tap) !important; }
+  #viewui button[aria-checked="true"] { color:var(--ink); border-color:var(--rule); }
+  #viewui button:active { background:var(--ink); color:var(--bg); }
+  #viewui button:disabled { color:var(--ink-3); cursor:default; border-color:transparent; }
+
+  .thumb #topband, .thumb #capband { display:none !important; }
+  .noband #topband { display:none; }
+  @media (max-height:220px){
+    #topband { display:none; }
+  }
+  @media (max-height:320px){
+    #capband { padding:6px var(--s3); gap:0; }
+    #capline, #liningChip { display:none; }
+    #truth { font-size:var(--t-100); line-height:1.35; max-width:none; }
+  }
+  @media (max-height:250px){
+    #topband, #capband { display:none; }
+  }
+  .thumb #stage > canvas { opacity:1; transition:none; }    
+
+  #stagesay { position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+              overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+
+  #stage > canvas { opacity:0; transition:opacity 240ms cubic-bezier(.35,0,.15,1); }
+  body.ready #stage > canvas { opacity:1; }
+
+  #loadline { display:flex; align-items:center; gap:var(--s3); color:var(--ink-2);
+              font:var(--w-med) var(--t-100) var(--sans); letter-spacing:var(--tr-caps); }
+  body.ready #loadline { display:none; }
+  #loadline .bar { display:none; width:120px; height:2px; background:var(--hair); }
+  #loadline.det .bar { display:block; }
+  #loadline .bar i { display:block; height:100%; width:0; background:var(--ink); transition:width .2s linear; }
+  @media (prefers-reduced-motion: reduce) {
+    #stage > canvas, #loadline .bar i, #hint { transition:none; }
+  }
+
+  #card { position:fixed; inset:0; background:var(--book); display:none; place-items:center; z-index:20; }
+  #card.open { display:grid; }
+  #card .inner { background:var(--book); padding:var(--s4) var(--s4) var(--s3); max-width:min(86vw,460px); max-height:92vh;
+                 display:flex; flex-direction:column; min-height:0;
+                 overflow:auto; text-align:center; font:var(--t-200) var(--sans); letter-spacing:var(--tr-text); color:var(--ink); }
+  #card img { width:100%; display:block; margin-bottom:var(--s3);
+              flex:0 1 auto; min-height:0; height:auto; object-fit:contain; }
+  #card .actions { display:flex; gap:var(--s2); justify-content:center; margin-top:var(--s2); }
+  #card button { --ring-bw:1px;
+                 border:1px solid var(--ink); background:var(--ink); color:var(--bg); padding:var(--s2) var(--s3);
+                 font:var(--w-med) var(--t-100) var(--sans); letter-spacing:normal; cursor:pointer;
+                 border-radius:var(--radius); min-height:var(--tap); }
+  #card button.ghost { background:var(--book); color:var(--ink); border-color:var(--rule); }
+
+  #labelCard { position:fixed; inset:0; background:var(--book); display:none; place-items:center; z-index:30; }
+  #labelCard.open { display:grid; }
+  #labelCard .labelin { display:grid; justify-items:start; gap:var(--s4);
+                        width:min(88vw,560px); }
+  #labelCard .panel { background:var(--book); border:1px solid var(--rule);
+                      padding:var(--s7) var(--s6); width:100%;
+                      display:grid; place-items:center; gap:var(--s4); }
+  #labelCard img { width:min(70vw,420px); border:1px solid var(--rule); }
+  #labelCard.lining img { display:none; }
+  #labelCard.lining .panel { padding:0; gap:0; min-height:min(62vh,420px); }
+  #labelCard .labelfoot { display:flex; width:100%; gap:var(--s5);
+                          align-items:baseline; justify-content:space-between; }
+  #labelCard .cap { margin:0; flex:1 1 auto; text-align:left; text-transform:none;
+                    font:var(--w-reg) var(--t-200)/1.4 var(--sans);
+                    letter-spacing:var(--tr-text); color:var(--ink);
+                    background:none; padding:0; }
+  #labelCard button { --ring-bw:1px; flex:none;
+                      border:0; border-bottom:1px solid var(--rule); border-radius:0;
+                      background:none; color:var(--ink); padding:var(--s2) 0;
+                      font:var(--w-reg) var(--t-200) var(--sans); letter-spacing:var(--tr-text);
+                      cursor:pointer; min-height:var(--tap); }
+
+  @media (max-width:640px){
+    #topband { padding:var(--s2) var(--s4); padding-top:calc(var(--s2) + var(--reserve-top)); }
+    #capband { padding:var(--s2) var(--s4); padding-bottom:calc(var(--s2) + var(--reserve-bottom));
+               font-size:var(--t-100); gap:var(--s1); }
+    #capline { flex-direction:column; gap:var(--s1); }
+    #hint { text-align:left; }
+    #zoomui button { width:var(--tap); height:var(--tap); }
+    #viewui button { height:var(--tap); }
+  }
+  @media (max-height:460px){
+    #capband { font-size:var(--t-100); padding:var(--s1) var(--s3); }
+    #cap .tail, #cap .book { display:none; }
+    #cap .mut { display:inline; }
+    #cap .code::before { content:'\00a0·\00a0'; }
+    #liningChip canvas { width:22px; height:22px; }
+    #zoomui button { width:32px; height:32px; }
+    #viewui button { margin-block:-6px; }
+  }
+</style>
+</head>
+<body>
+<div id="topband">
+  <div id="zoomui">
+    <button id="zin" aria-label="zoom in">+</button>
+    <button id="zout" aria-label="zoom out">−</button>
+    <button id="zreset" aria-label="reset the framing">⟳</button>
+  </div>
+  <div id="viewui" role="radiogroup" aria-label="The view">
+    <button type="button" role="radio" id="vfront" aria-checked="true"  tabindex="0">FRONT</button>
+    <button type="button" role="radio" id="vside"  aria-checked="false" tabindex="-1">SIDE</button>
+    <button type="button" role="radio" id="vback"  aria-checked="false" tabindex="-1">BACK</button>
+  </div>
+</div>
+
+<div id="stage"></div>
+
+<p id="stagesay" role="status" aria-live="polite"></p>
+
+<div id="capband">
+  <div id="capline">
+    <div id="cap"></div>
+    <button id="hint" type="button" hidden>Drag to turn</button>
+  </div>
+  <div id="liningChip"><canvas width="68" height="68"></canvas><span></span></div>
+  <div id="loadline"><span>DRAPING YOUR CLOTH</span><span class="bar"><i></i></span></div>
+  <p id="truth">A standard form in your cloth — your garment is cut to your own record. This colour is measured from the cloth. Your screen is not.</p>
+  <script>
+    (function () {
+      if (!window.HOUSE_LINE) return;               
+      var t = document.getElementById('truth');
+      var said = HOUSE_LINE.colourFromSearch(location.search);
+      if (!t || said === HOUSE_LINE.MEASURED) return;
+      t.textContent = 'A standard form in your cloth — your garment is cut to your own record. ' + said;
+    }());
+  </script>
+</div>
+
+<div id="labelCard"><div class="labelin">
+  <div class="panel" id="labelPanel">
+    <img id="labelImg" alt="the label sewn inside your jacket">
+  </div>
+  <div class="labelfoot">
+    <p class="cap" id="labelCap">Sewn inside your jacket, on your chosen lining.</p>
+    <button id="labelClose" type="button">Close</button>
+  </div>
+</div></div>
+<div id="card"><div class="inner"><img alt="your look"><div class="spec"></div>
+<div class="actions"><button id="cardCopy">Copy image</button><button id="cardShare">Share</button><button class="ghost" id="cardClose">Close</button></div>
+</div></div>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.1a9858dc.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls, GLTFLoader, RoomEnvironment, MeshoptDecoder } from 'three';
+
+window.PT3D_BOOTED?.();
+
+THREE.Cache.enabled = true;
+
+const q = new URLSearchParams(location.search);
+const THUMB = q.get('thumb') === '1';
+const NOBAND = q.get('band') === '0';
+const DEBUG = q.get('debug') ?? '';
+const DEBUG_PAINT = DEBUG === 'paint';
+const log = (...a) => { if (DEBUG) console.log(...a); };
+if (THUMB) document.documentElement.classList.add('thumb');
+if (NOBAND) document.documentElement.classList.add('noband');
+
+const SWAP_LOG = [];                        
+let swapT0 = 0;
+function stage(name, ms) {
+  const at = performance.now() - swapT0;
+  try {
+    performance.mark('pt:' + name);
+    if (ms != null) performance.measure('pt:' + name, { start: performance.now() - ms, duration: ms });
+  } catch {   }
+  SWAP_LOG.push({ stage: name, at: +at.toFixed(1), ms: ms == null ? null : +ms.toFixed(1) });
+  if (SWAP_LOG.length > 240) SWAP_LOG.shift();
+}
+function timed(name, fn) {
+  const a = performance.now();
+  try { return fn(); } finally { stage(name, performance.now() - a); }
+}
+window.PT_SWAP = () => SWAP_LOG.map((e) => ({ ...e }));
+
+const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const el = (tag, text, cls) => { const n = document.createElement(tag); if (cls) n.className = cls; n.textContent = text ?? ''; return n; };
+const row = (cls, ...kids) => { const n = document.createElement('span'); n.className = cls; n.append(...kids); return n; };
+const txt = (s) => document.createTextNode(s);
+
+const cur = {
+  cloth:       q.get('img') || null,
+  code:        q.get('code') ?? '',
+  book:        q.get('book') ?? '',
+  plain:       q.get('plain') ?? '',
+  weight:      q.get('weight') ?? '',
+  shirt:       q.get('shirt') || null,
+  lining:      q.get('lining') || null,
+  liningCode:  q.get('liningcode') || null,
+  price:       q.get('price') ?? '',
+  shoes:       q.get('shoes') ?? 'black',
+  buttons:     q.get('buttons') ?? 'Dark horn',
+  scene:       q.get('scene') === 'evening' ? 'evening' : 'studio',
+  ground:      q.get('ground') === 'photo' ? 'photo' : 'room',
+  vest:        q.get('vest') === '1',
+  compare:     q.get('compare') || null,
+  comparecode: q.get('comparecode') || null,
+  hex:         q.get('hex') || null,
+  hexbasis:    q.get('hexbasis') || null,
+  pat:         q.get('pat') || null,
+  repeatcm:    Number(q.get('repeatcm') ?? q.get('repeat')) || null,
+  photounusable: q.get('photounusable') === '1',
+  shirtphotounusable: q.get('shirtphotounusable') === '1',
+  shirtpat:    q.get('shirtpat') || null,
+  liningpat:   q.get('liningpat') || null,
+  comparehex:  q.get('comparehex') || null,
+  comparehexbasis: q.get('comparehexbasis') || null,
+  comparepat:  q.get('comparepat') || null,
+  comparerepeatcm: Number(q.get('comparerepeatcm')) || null,
+  comparephotounusable: q.get('comparephotounusable') === '1',
+  shirthex:    q.get('shirthex') || null,
+  lininghex:   q.get('lininghex') || null,
+  bandTop:     Math.max(0, Math.min(240, Number(q.get('bandtop')) || 0)),
+  bandBottom:  Math.max(0, Math.min(240, Number(q.get('bandbottom')) || 0)),
+};
+const imgParamPresent = !!cur.cloth;
+
+function noteCloth(url, pat, cm) {
+  if (!url) return;
+  if (pat) PATTERN_OF.set(url, pat); else PATTERN_OF.delete(url);
+  if (cm > 0) REPEAT_CM.set(url, cm); else REPEAT_CM.delete(url);
+}
+function noteAll() {
+  noteCloth(cur.cloth, cur.pat, cur.repeatcm);
+  noteCloth(cur.compare, cur.comparepat, cur.comparerepeatcm);
+  noteCloth(cur.shirt, cur.shirtpat, null);
+  noteCloth(cur.lining, cur.liningpat, null);
+}
+
+function applyReserve() {
+  const r = document.documentElement.style;
+  r.setProperty('--reserve-top', cur.bandTop + 'px');
+  r.setProperty('--reserve-bottom', cur.bandBottom + 'px');
+}
+applyReserve();
+
+function hexInt(h) {
+  if (typeof h !== 'string') return null;
+  const m = /^#?([0-9a-f]{6})$/i.exec(h.trim());
+  return m ? parseInt(m[1], 16) : null;
+}
+const NO_COLOUR = 0x8c8c8c;
+
+function hexTrust(u) {
+  const n = hexInt(u?.hex);
+  if (n === null) return null;
+  if (u.photoUnusable) return null;
+  if (u.hexBasis) return u.hexBasis === 'measured' ? n : null;
+  if (!u.hexStrict) return n;                        
+  const h = (u.hex || '').replace('#', '');
+  const flat = h.length === 6 && h.slice(0, 2) === h.slice(2, 4) && h.slice(2, 4) === h.slice(4, 6);
+  if (!flat) return n;
+  const p = u.pat;
+  return (p && p !== 'jacquard' && p !== 'print') ? n : null;
+}
+
+window.PT_READY = false;
+window.PT_STATE = { hero:false, cloth:false, degraded:false };
+
+const stageEl = document.getElementById('stage');
+const paneW = () => Math.max(1, Math.round(stageEl.getBoundingClientRect().width || innerWidth));
+const paneH = () => Math.max(1, Math.round(stageEl.getBoundingClientRect().height || innerHeight));
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(cssVar('--room') || '#3D3D3D');
+
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false, preserveDrawingBuffer:true }); }
+catch (e) { window.PT3D_FAILED?.('webgl'); throw e; }
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(paneW(), paneH());
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.98;
+stageEl.appendChild(renderer.domElement);
+
+const RENDER = { draws: 0, lastRenderAt: 0, parked: false, onScreen: true };
+let rafId = 0;
+function dirty() { if (!rafId && !RENDER.parked) rafId = requestAnimationFrame(onFrame); }
+renderer.domElement.setAttribute('role', 'img');
+renderer.domElement.setAttribute('aria-label', 'Your suit, seen from the front.');
+
+const COARSE = matchMedia('(pointer:coarse)').matches;
+const ANISO = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+
+{
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environmentIntensity = 0.55;
+  pmrem.dispose();
+}
+
+const camera = new THREE.PerspectiveCamera(34, paneW() / paneH(), 1, 800);  
+camera.position.set(34, 52, 225);
+
+let userAdjusted = false;
+let viewLocked = false;
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 36, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 60; controls.maxDistance = 420;
+controls.enablePan = false;                   
+let wheelZoom = false;
+function setWheelZoom(on) {
+  wheelZoom = !!on;
+  controls.enableZoom = COARSE || wheelZoom || document.activeElement === renderer.domElement;
+}
+controls.enableZoom = COARSE;                 
+controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_ROTATE };
+controls.minPolarAngle = Math.PI*0.36;        
+controls.maxPolarAngle = Math.PI*0.55;
+controls.addEventListener('start', () => {
+  userAdjusted = true; lastInputAt = performance.now(); dismissHint();
+  try { parent.postMessage({ ptTouched: 1 }, '*'); } catch {   }
+});
+controls.addEventListener('end',   () => { lastInputAt = performance.now(); });
+renderer.domElement.style.touchAction = 'pan-y';
+(() => {
+  let tY = null, tX = null, tAxis = null;
+  const el = renderer.domElement;
+  el.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) { tY = e.touches[0].clientY; tX = e.touches[0].clientX; tAxis = null; }
+    else { tY = null; tAxis = null; }
+  }, { passive: true });
+  el.addEventListener('touchmove', (e) => {
+    if (e.touches.length !== 1 || tY == null) return;
+    const y = e.touches[0].clientY, x = e.touches[0].clientX;
+    if (tAxis == null) {
+      const ax = Math.abs(x - tX), ay = Math.abs(y - tY);
+      if (ax + ay > 6) tAxis = ay > ax ? 'v' : 'h';
+    }
+    if (tAxis === 'v') {
+      try { parent.postMessage({ ptScrollBy: tY - y }, '*'); } catch {   }
+    }
+    tY = y; tX = x;
+  }, { passive: true });
+  el.addEventListener('touchend', () => { tY = null; tAxis = null; }, { passive: true });
+})();
+renderer.domElement.addEventListener('pointerdown', () => dismissHint());
+
+const hemi = new THREE.HemisphereLight(0xfff8ef, 0xb8b0a4, 0.5);
+scene.add(hemi);
+const key = new THREE.DirectionalLight(0xfff2e2, 1.45);
+key.position.set(60, 110, 70);
+key.castShadow = true;
+key.shadow.mapSize.set(COARSE ? 1024 : 2048, COARSE ? 1024 : 2048);
+key.shadow.bias = -0.0004; key.shadow.normalBias = 0.6;
+key.shadow.camera.left = -55; key.shadow.camera.right = 55;
+key.shadow.camera.bottom = -70; key.shadow.camera.top = 80;
+key.shadow.camera.near = 40;  key.shadow.camera.far = 260;
+key.shadow.autoUpdate = false;                
+key.target.position.set(0, 28, 0);            
+scene.add(key); scene.add(key.target);
+const rim = new THREE.DirectionalLight(0xdfe8f2, 0.55);
+rim.position.set(-70, 80, -60);
+scene.add(rim);
+
+const edge = new THREE.DirectionalLight(0xffffff, 0.0);
+edge.position.set(-60, 70, -90);
+scene.add(edge); scene.add(edge.target);
+const EDGE_ON = 1.8;
+function placeEdge() {
+  if (edge.intensity <= 0) return;
+  const t = controls.target;
+  const dx = camera.position.x - t.x, dz = camera.position.z - t.z;
+  const r = Math.hypot(dx, dz) || 1;
+  const a = Math.atan2(dz, dx) + Math.PI - 0.61;       
+  edge.position.set(t.x + Math.cos(a) * r, t.y + r * 0.55, t.z + Math.sin(a) * r);
+  edge.target.position.copy(t);
+  edge.target.updateMatrixWorld();
+}
+const shadowRefresh = () => { key.shadow.needsUpdate = true; dirty(); };
+
+const ground = new THREE.Mesh(new THREE.CircleGeometry(140, 64),
+  new THREE.ShadowMaterial({ opacity: 0.16 }));
+ground.rotation.x = -Math.PI/2;
+ground.position.y = -31.15;                   
+ground.receiveShadow = true;
+scene.add(ground);
+
+const CONTACT_PEAK_DARK  = 0.62;    
+const CONTACT_PEAK_LIGHT = 0.13;    
+const contactTexFor = (() => {
+  const cache = new Map();
+  return (peak) => {
+    if (cache.has(peak)) return cache.get(peak);
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const x = c.getContext('2d');
+    const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+    const mid = Math.round(peak * (0.30 / 0.62) * 1000) / 1000;
+    g.addColorStop(0, `rgba(0,0,0,${peak})`);
+    g.addColorStop(0.42, `rgba(0,0,0,${mid})`);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    cache.set(peak, t);
+    return t;
+  };
+})();
+const contactTex = contactTexFor(CONTACT_PEAK_LIGHT);
+const contact = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
+  new THREE.MeshBasicMaterial({ map: contactTex, transparent: true, depthWrite: false }));
+contact.rotation.x = -Math.PI / 2;
+contact.position.y = -31.05;                  
+contact.renderOrder = -1;
+contact.visible = false;                      
+scene.add(contact);
+
+function applyShadowStyle() {
+  const photo = cur.ground === 'photo';
+  const EDGE_FOR_GROUND = 0;                  
+  void EDGE_ON;
+  edge.intensity = EDGE_FOR_GROUND;
+  if (edge.intensity > 0) placeEdge();
+  ground.material.opacity = photo ? 0 : (cur.scene === 'evening' ? 0.34 : 0.26);
+  contact.visible = photo;
+  if (photo) {
+    const room = (cssVar('--room') || '#F7F7F7').trim();
+    const n = parseInt(room.replace('#', ''), 16);
+    const L = Number.isFinite(n)
+      ? (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255
+      : 1;
+    const peak = L < 0.5 ? CONTACT_PEAK_DARK : CONTACT_PEAK_LIGHT;
+    const want = contactTexFor(peak);
+    if (contact.material.map !== want) {
+      contact.material.map = want;
+      contact.material.needsUpdate = true;
+    }
+    const w = Math.max(20, subjectWidth()) * 1.9;
+    contact.scale.set(w, w * 0.62, 1);
+    contact.position.x = heroRoots[0] ? heroRoots[0].position.x : 0;
+  }
+  shadowRefresh();
+}
+function setGround(kind) {
+  const want = kind === 'photo' ? 'photo' : 'room';
+  if (cur.ground === want) return;
+  cur.ground = want;
+  if (want === 'photo') document.documentElement.dataset.ground = 'photo';
+  else delete document.documentElement.dataset.ground;
+  scene.background.set(new THREE.Color(cssVar('--room') || '#3D3D3D'));
+  applyShadowStyle();
+  log('[ground]', want);
+}
+function applyScene(mood) {
+  mood = mood === 'evening' ? 'evening' : 'studio';
+  cur.scene = mood;
+  document.documentElement.dataset.mood = mood;
+  scene.background.set(new THREE.Color(cssVar('--room') || '#3D3D3D'));
+  if (mood === 'evening') {
+    hemi.intensity = 0.28; hemi.color.set(0x6a6a6a); hemi.groundColor.set(0x121212);
+    key.intensity  = 2.40; key.color.set(0xfff0dc); key.position.set(70, 95, 95);
+    rim.intensity  = 1.05; rim.color.set(0x9fb4d6);
+    renderer.toneMappingExposure = 0.92;
+  } else {
+    hemi.intensity = 0.50; hemi.color.set(0xfff8ef); hemi.groundColor.set(0xb8b0a4);
+    key.intensity  = 1.45; key.color.set(0xfff2e2); key.position.set(60, 110, 70);
+    rim.intensity  = 0.55; rim.color.set(0xdfe8f2);
+    renderer.toneMappingExposure = 0.98;
+  }
+  applyShadowStyle();
+  log('[scene]', mood);
+}
+
+const P = [
+  [14.8, 0], [15.8, 3], [16.6, 8], [17.0, 14],
+  [16.8, 20], [16.2, 27], [15.8, 33],
+  [15.6, 38], [15.9, 42],
+  [16.9, 48], [18.0, 54], [18.8, 60],
+  [18.5, 65], [17.2, 70], [14.4, 75],
+  [10.6, 79], [8.2, 82], [7.2, 84], [6.9, 87],
+];
+const profile = P.map(([r, y]) => new THREE.Vector2(r, y));
+const curve = new THREE.CatmullRomCurve3(profile.map(p => new THREE.Vector3(p.x, p.y, 0)));
+const smooth = curve.getPoints(80).map(v => new THREE.Vector2(Math.max(v.x, 0.01), v.y));
+const formGeo = new THREE.LatheGeometry(smooth, 96);
+const walnut = new THREE.MeshStandardMaterial({ color: 0x4a3325, roughness: 0.55, metalness: 0.08 });
+const brass = new THREE.MeshStandardMaterial({ color: 0x9a7d4a, roughness: 0.35, metalness: 0.85 });
+
+window.PT_CROPS = { probes: 0, cacheHits: 0 };
+
+function cropRect(d, W, H) {
+  const patch = (x0, y0, n) => {
+    let r = 0, g = 0, b = 0, k = 0;
+    const xs = Math.max(0, x0), ys = Math.max(0, y0);
+    const xe = Math.min(W, x0 + n), ye = Math.min(H, y0 + n);
+    for (let y = ys; y < ye; y++) for (let x = xs; x < xe; x++) {
+      const i = (y * W + x) << 2; r += d[i]; g += d[i + 1]; b += d[i + 2]; k++;
+    }
+    return k ? [r / k, g / k, b / k] : [0, 0, 0];
+  };
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  const inset = Math.round(Math.min(W, H) * 0.03);
+  {
+    const n = Math.max(4, Math.round(W * 0.06));
+    const c = patch(Math.round(W / 2 - n / 2), Math.round(H / 2 - n / 2), n);
+    const ds = [patch(0, 0, n), patch(W - n, 0, n), patch(0, H - n, n), patch(W - n, H - n, n)]
+      .map((p) => dist(p, c)).sort((a, b) => a - b);
+    if (ds[1] > 110) { const s = Math.floor(Math.min(W, H) * 0.34); return { sx: (W - s) >> 1, sy: (H - s) >> 1, s, kind: 'framed' }; }
+  }
+  const B = 4, bw = Math.ceil(W / B), bh = Math.ceil(H / B);
+  const yellowBlocks = [], whiteBlocks = [];
+  for (let by = 0; by < bh; by++) for (let bx = 0; bx < bw; bx++) {
+    let yel = 0, whi = 0, n = 0;
+    const ye = Math.min(H, (by + 1) * B), xe = Math.min(W, (bx + 1) * B);
+    for (let y = by * B; y < ye; y++) for (let x = bx * B; x < xe; x++) {
+      const i = (y * W + x) << 2, r = d[i], g = d[i + 1], b = d[i + 2]; n++;
+      if (r > 150 && g > 120 && b < 120 && r - b > 70 && g - b > 45) yel++;
+      if (r > 232 && g > 232 && b > 228 && Math.max(r, g, b) - Math.min(r, g, b) < 18) whi++;
+    }
+    if (n && yel / n >= 0.5) yellowBlocks.push([bx, by]);
+    if (n && whi / n >= 0.8) whiteBlocks.push([bx, by]);
+  }
+  const total = bw * bh;
+  const avoidBR = (kind, lc) => {
+    const s = Math.floor(Math.min(W, H) * 0.86);
+    const cx = lc ? lc[0] : W, cy = lc ? lc[1] : H;             
+    return { sx: cx > W / 2 ? inset : W - s - inset, sy: cy > H / 2 ? inset : H - s - inset, s, kind };
+  };
+  const labels = [];
+  if (yellowBlocks.length && yellowBlocks.length <= total * 0.2) labels.push(...yellowBlocks);
+  if (whiteBlocks.length && whiteBlocks.length <= total * 0.2) labels.push(...whiteBlocks);
+  if (yellowBlocks.length > total * 0.2 && !labels.length) return avoidBR('yellowcloth');
+  if (!labels.length) return avoidBR('nochip');
+  let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  for (const [bx, by] of labels) { x0 = Math.min(x0, bx * B); y0 = Math.min(y0, by * B); x1 = Math.max(x1, (bx + 1) * B); y1 = Math.max(y1, (by + 1) * B); }
+  x0 -= B; y0 -= B; x1 += B; y1 += B;
+  const cands = [
+    { x: 0, y: 0, w: W, h: Math.max(0, y0) },
+    { x: 0, y: Math.min(H, y1), w: W, h: Math.max(0, H - y1) },
+    { x: 0, y: 0, w: Math.max(0, x0), h: H },
+    { x: Math.min(W, x1), y: 0, w: Math.max(0, W - x1), h: H },
+  ];
+  let best = cands[0];
+  for (const c of cands) if (c.w * c.h > best.w * best.h) best = c;
+  const cx = best.x + inset, cy = best.y + inset, cw = best.w - 2 * inset, ch = best.h - 2 * inset;
+  const s = Math.max(8, Math.min(cw, ch));
+  if (s < Math.min(W, H) * 0.5) return avoidBR('chip-fallback', [(x0 + x1) / 2, (y0 + y1) / 2]);
+  return { sx: Math.round(cx + (cw - s) / 2), sy: Math.round(cy + (ch - s) / 2), s, kind: 'chip' };
+}
+
+function chipAwareCrop(im) {
+  const PROBE = 256;
+  const sc = Math.min(PROBE / im.width, PROBE / im.height, 1);
+  const W = Math.max(8, Math.round(im.width * sc)), H = Math.max(8, Math.round(im.height * sc));
+  const probe = document.createElement('canvas');
+  probe.width = W; probe.height = H;
+  const px = probe.getContext('2d', { willReadFrequently: true });
+  px.drawImage(im, 0, 0, W, H);
+  PT_CROPS.probes++;
+  const r = cropRect(px.getImageData(0, 0, W, H).data, W, H);
+  const k = 1 / sc;                                    
+  const s = Math.max(8, Math.min(Math.round(r.s * k), im.width, im.height));
+  return {
+    sx: Math.max(0, Math.min(im.width - s, Math.round(r.sx * k))),
+    sy: Math.max(0, Math.min(im.height - s, Math.round(r.sy * k))),
+    s, kind: r.kind,
+  };
+}
+
+const CLEAN_TIER = /\/swatches-(clean|224)\/suiting\//;
+function cropFor(url, im) {
+  if (CLEAN_TIER.test(url)) {
+    const s = Math.min(im.width, im.height);
+    return { sx: (im.width - s) >> 1, sy: (im.height - s) >> 1, s, kind: 'clean' };
+  }
+  if (/\/ea-jacquard\//.test(url)) {
+    const s = Math.floor(Math.min(im.width, im.height) * 0.34);
+    return { sx: (im.width - s) >> 1, sy: (im.height - s) >> 1, s, kind: 'ea-centre' };
+  }
+  return chipAwareCrop(im);
+}
+
+const MEAN_N = 64;
+function meanLum(cv) {
+  const n = Math.min(MEAN_N, cv.width, cv.height);
+  const s = document.createElement('canvas'); s.width = s.height = n;
+  const c = s.getContext('2d', { willReadFrequently: true });
+  c.drawImage(cv, 0, 0, n, n);
+  const d = c.getImageData(0, 0, n, n).data;
+  let l = 0;
+  for (let i = 0; i < d.length; i += 4) l += 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+  return l / (n * n) / 255;
+}
+function tileStats(cv, url) {
+  const lum = meanLum(cv);
+  if (!PATTERNED.test(PATTERN_OF.get(url) ?? '')) return { lum, periodPx: null, periodCorr: 0 };
+  const W = cv.width, H = cv.height;
+  const px = cv.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, W, H).data;
+  const col = new Float32Array(W), rowv = new Float32Array(H);
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const i = (y * W + x) << 2;
+      const l = 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
+      col[x] += l; rowv[y] += l;
+    }
+  }
+  for (let x = 0; x < W; x++) col[x] /= H;
+  for (let y = 0; y < H; y++) rowv[y] /= W;
+  const per = periodOf(smooth7(col), smooth7(rowv), Math.min(W, H));
+  return { lum, periodPx: per?.px ?? null, periodCorr: per?.corr ?? 0 };
+}
+function smooth7(v) {
+  const n = v.length, o = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let a = 0, k = 0;
+    for (let j = -3; j <= 3; j++) { const t = i + j; if (t >= 0 && t < n) { a += v[t]; k++; } }
+    o[i] = a / k;
+  }
+  return o;
+}
+function periodOf(col, rowv, side) {
+  const best = [];
+  for (const v of [col, rowv]) {
+    const n = v.length;
+    let mean = 0; for (let i = 0; i < n; i++) mean += v[i]; mean /= n;
+    let var0 = 0; for (let i = 0; i < n; i++) var0 += (v[i] - mean) ** 2;
+    if (var0 < 1e-6) { best.push(null); continue; }
+    const maxLag = Math.floor(n / 3);
+    const corr = new Float32Array(maxLag + 1);
+    for (let lag = 1; lag <= maxLag; lag++) {
+      let acc = 0;
+      for (let i = 0; i + lag < n; i++) acc += (v[i] - mean) * (v[i + lag] - mean);
+      corr[lag] = acc / (var0 * (1 - lag / n));
+    }
+    let lag = 1;
+    while (lag < maxLag && corr[lag] > 0.02) lag++;
+    let peakLag = 0, peakVal = 0;
+    for (; lag <= maxLag; lag++) if (corr[lag] > peakVal) { peakVal = corr[lag]; peakLag = lag; }
+    const twice = peakLag * 2;
+    const harmonic = twice <= maxLag ? corr[twice] >= 0.35 * peakVal : true;
+    best.push(harmonic && peakVal >= 0.3 && peakLag >= 8 ? { lag: peakLag, corr: peakVal } : null);
+  }
+  const found = best.filter((v) => v);
+  if (!found.length) return null;
+  const pick = found.reduce((a, b) => (a.lag <= b.lag ? a : b));
+  return { px: pick.lag * (side / col.length), corr: +pick.corr.toFixed(2) };
+}
+
+const cropCache = new Map();      
+const cropWait = new Map();       
+let texFailed = false;
+
+function loadCropped(url, onReady) {
+  const hit = cropCache.get(url);
+  if (hit) { PT_CROPS.cacheHits++; stage('crop:cached'); onReady(hit.canvas, hit.lum); return; }
+  const waiting = cropWait.get(url);
+  if (waiting) { waiting.push(onReady); return; }
+  cropWait.set(url, [onReady]);
+  const fetchAt = performance.now();
+  const done = (canvas, lum) => {
+    const cbs = cropWait.get(url) ?? []; cropWait.delete(url);
+    for (const cb of cbs) cb(canvas, lum);
+  };
+  let settled = false;
+  const fail = (why, err) => {
+    if (settled) return; settled = true;
+    console.warn('[swatch]', why, url, err ?? '');
+    texFailed = true;
+    window.PT_STATE.degraded = true;
+    try { parent.postMessage({ ptError: 'swatch', url, why }, '*'); } catch {   }
+    done(null, 0.5);
+  };
+  const decodeBlob = async () => {
+    const res = await fetch(url, { priority: 'high' });
+    if (!res.ok) throw Object.assign(new Error('HTTP ' + res.status), { why: 'unreachable' });
+    const blob = await res.blob();
+    stage('fetch', performance.now() - fetchAt);
+    const decAt = performance.now();
+    try { return await createImageBitmap(blob); }
+    finally { stage('decode', performance.now() - decAt); }
+  };
+  const decodeImg = () => new Promise((res, rej) => {
+    const im = new Image();
+    im.decoding = 'async';
+    im.onload = () => { stage('fetch', performance.now() - fetchAt); res(im); };
+    im.onerror = () => rej(Object.assign(new Error('unreachable'), { why: 'unreachable' }));
+    im.src = url;
+  });
+  (async () => {
+    let src;
+    try { src = typeof createImageBitmap === 'function' ? await decodeBlob() : await decodeImg(); }
+    catch (e) { return fail(e?.why ?? 'undecodable', e?.message ?? e); }
+    let c;
+    try { c = timed('probe', () => cropFor(url, src)); } catch (e) { return fail('probe-threw', e?.message ?? e); }
+    if (!c || !(c.s >= 8) || !Number.isFinite(c.sx + c.sy + c.s)) return fail('probe-degenerate');
+    try {
+      const size = Math.min(512, 1 << Math.floor(Math.log2(Math.max(8, c.s))));
+      const cv = timed('tile', () => {
+        const t = document.createElement('canvas'); t.width = t.height = size;
+        t.getContext('2d', { willReadFrequently: true }).drawImage(src, c.sx, c.sy, c.s, c.s, 0, 0, size, size);
+        return t;
+      });
+      src.close?.();
+      const st = timed('analyse', () => tileStats(cv, url));
+      const lum = st.lum;
+      if (cropCache.size >= 48) cropCache.delete(cropCache.keys().next().value);
+      cropCache.set(url, { canvas: cv, lum, periodPx: st.periodPx, periodCorr: st.periodCorr, side: size });
+      log('[crop]', url, c.kind, c.s, '→', size, 'period', st.periodPx, '@', st.periodCorr);
+      settled = true;
+      done(cv, lum);
+    } catch (e) { fail('crop-threw', e?.message ?? e); }
+  })();
+}
+
+
+const CM_PER_UNIT = 1.43;
+
+const PATTERN_CM = { plain: 2, stripe: 1.2, check: 4.5, texture_melange: 2, texture: 2, print: 6, jacquard: 5 };
+const PATTERN_CM_UNKNOWN = 2.8;
+const PLAIN_TILE_CM = 9;
+
+const GARMENT_DENSITY = { suit: 0.00665, trouser: 0.0078, vest: 0.0120, shirt: 0.00895, lining: 0.00665, form: 0.0122 };
+
+let densityMeasured = false;
+function measureDensity(root, scale) {
+  if (densityMeasured) return;
+  densityMeasured = true;
+  root.updateMatrixWorld(true);
+  const acc = {};
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
+  const ab = new THREE.Vector3(), ac = new THREE.Vector3(), cr = new THREE.Vector3();
+  root.traverse((o) => {
+    if (!o.isMesh || !o.geometry) return;
+    const kind = kindOf(o.name);
+    if (!kind) return;
+    const g = o.geometry, pos = g.attributes.position, uv = g.attributes.uv;
+    if (!pos || !uv) return;
+    const idx = g.index ? g.index.array : null;
+    const triCount = idx ? idx.length / 3 : pos.count / 3;
+    const step = Math.max(1, Math.ceil(triCount / 6000));
+    const e = acc[kind] ?? (acc[kind] = { w: 0, u: 0 });
+    for (let t = 0; t < triCount; t += step) {
+      const i0 = idx ? idx[t * 3] : t * 3, i1 = idx ? idx[t * 3 + 1] : t * 3 + 1, i2 = idx ? idx[t * 3 + 2] : t * 3 + 2;
+      a.fromBufferAttribute(pos, i0).applyMatrix4(o.matrixWorld);
+      b.fromBufferAttribute(pos, i1).applyMatrix4(o.matrixWorld);
+      c.fromBufferAttribute(pos, i2).applyMatrix4(o.matrixWorld);
+      ab.subVectors(b, a); ac.subVectors(c, a);
+      e.w += 0.5 * cr.crossVectors(ab, ac).length();
+      const au = uv.getX(i0), av = uv.getY(i0), bu = uv.getX(i1), bv = uv.getY(i1), cu = uv.getX(i2), cv2 = uv.getY(i2);
+      e.u += 0.5 * Math.abs((bu - au) * (cv2 - av) - (cu - au) * (bv - av));
+    }
+  });
+  const out = [];
+  for (const k in acc) {
+    const e = acc[k];
+    if (!(e.w > 0) || !(e.u > 0)) continue;
+    GARMENT_DENSITY[k] = Math.sqrt(e.u / e.w) / (scale || 1);    
+    out.push(k + ' ' + GARMENT_DENSITY[k].toFixed(5));
+  }
+  if (out.length) log('[uv density]', out.join(' · '));
+}
+function kindOf(name) {
+  const n = `${name}/`;
+  if (SHOEISH.test(n) || SKIP.test(n)) return SHIRTISH.test(n) ? 'shirt' : null;
+  if (SHIRTISH.test(n)) return 'shirt';
+  if (VESTISH.test(n)) return 'vest';
+  if (TROUSERISH.test(n)) return 'trouser';
+  return 'suit';
+}
+
+const REPEAT_CM = new Map();      
+const PATTERN_OF = new Map();     
+const PATTERNED = /^(stripe|check|print|jacquard)$/;
+function tileCmFor(url) {
+  const hit = cropCache.get(url);
+  const stated = REPEAT_CM.get(url);
+  const pat = PATTERN_OF.get(url);
+  const patCm = stated ?? PATTERN_CM[pat] ?? PATTERN_CM_UNKNOWN;
+  if (!hit) return patCm;
+  if (!PATTERNED.test(pat ?? '') || !hit.periodPx) return PLAIN_TILE_CM;
+  const repeats = Math.max(1, hit.side / hit.periodPx);  
+  const tile = patCm * repeats;
+  return (tile >= 4 && tile <= 30) ? tile : PLAIN_TILE_CM;
+}
+function repeatFor(kind, url) {
+  const d = GARMENT_DENSITY[kind] ?? GARMENT_DENSITY.suit;
+  const tile = Math.max(0.4, tileCmFor(url));
+  const r = CM_PER_UNIT / (tile * d);
+  return Number.isFinite(r) ? THREE.MathUtils.clamp(r, 1, 400) : 25;
+}
+
+const texPool = new Map();        
+function acquireTex(url, kind, canvas) {
+  const k = url + '|' + kind;
+  let e = texPool.get(k);
+  if (!e) {
+    const t = new THREE.CanvasTexture(canvas);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = ANISO;
+    const r = repeatFor(kind, url);
+    t.repeat.set(r, r);
+    t.userData.poolKey = k;
+    e = { tex: t, refs: 0 };
+    texPool.set(k, e);
+  }
+  return e.tex;
+}
+function releaseTex(t) {
+  const k = t?.userData?.poolKey;
+  const e = k ? texPool.get(k) : null;
+  if (!e) return;                   
+  if (--e.refs <= 0) { texPool.delete(k); e.tex.dispose(); }
+}
+function setMap(mat, slot, tex) {
+  if (slot === 'map' && !tex && mat.userData?.mix) tex = BLANK;
+  const old = mat[slot];
+  if (old === tex) return;
+  if (old) releaseTex(old);
+  if (tex) { const e = texPool.get(tex.userData?.poolKey); if (e) e.refs++; }
+  mat[slot] = tex;
+  if (!old !== !tex) mat.needsUpdate = true;
+  dirty();                          
+}
+
+const BLANK = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1);
+BLANK.colorSpace = THREE.SRGBColorSpace;
+BLANK.wrapS = BLANK.wrapT = THREE.RepeatWrapping;
+BLANK.needsUpdate = true;
+
+const flatTexes = new Map();
+function flatTex(hex) {
+  let t = flatTexes.get(hex);
+  if (!t) {
+    t = new THREE.DataTexture(new Uint8Array([(hex >> 16) & 255, (hex >> 8) & 255, hex & 255, 255]), 1, 1);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.userData.flat = hex;
+    t.needsUpdate = true;
+    flatTexes.set(hex, t);
+  }
+  return t;
+}
+
+const PT_OKLAB_GLSL = `
+vec3 ptToOklab(vec3 c) {
+  vec3 lms = vec3(
+    0.4122214708*c.r + 0.5363325363*c.g + 0.0514459929*c.b,
+    0.2119034982*c.r + 0.6806995451*c.g + 0.1073969566*c.b,
+    0.0883024619*c.r + 0.2817188376*c.g + 0.6299787005*c.b);
+  lms = pow(max(lms, vec3(0.0)), vec3(1.0/3.0));
+  return vec3(
+    0.2104542553*lms.x + 0.7936177850*lms.y - 0.0040720468*lms.z,
+    1.9779984951*lms.x - 2.4285922050*lms.y + 0.4505937099*lms.z,
+    0.0259040371*lms.x + 0.7827717662*lms.y - 0.8086757660*lms.z);
+}
+vec3 ptFromOklab(vec3 lab) {
+  vec3 lms = vec3(
+    lab.x + 0.3963377774*lab.y + 0.2158037573*lab.z,
+    lab.x - 0.1055613458*lab.y - 0.0638541728*lab.z,
+    lab.x - 0.0894841775*lab.y - 1.2914855480*lab.z);
+  lms = lms*lms*lms;
+  return max(vec3(
+     4.0767416621*lms.x - 3.3077115913*lms.y + 0.2309699292*lms.z,
+    -1.2684380046*lms.x + 2.6097574011*lms.y - 0.3413193965*lms.z,
+    -0.0041960863*lms.x - 0.7034186147*lms.y + 1.7076147010*lms.z), vec3(0.0));
+}
+`;
+function ptOnBeforeCompile(shader) {
+  const u = this.userData.mix;
+  if (!u) return;
+  shader.uniforms.ptMix = u.factor;
+  shader.uniforms.ptMapB = u.mapB;
+  shader.uniforms.ptRatioB = u.ratio;
+  shader.fragmentShader =
+    'uniform float ptMix;\nuniform sampler2D ptMapB;\nuniform vec2 ptRatioB;\n' + PT_OKLAB_GLSL +
+    shader.fragmentShader.replace('#include <map_fragment>', `
+#ifdef USE_MAP
+  vec4 ptA = texture2D( map, vMapUv );
+  if ( ptMix > 0.0 ) {
+    vec4 ptB = texture2D( ptMapB, vMapUv * ptRatioB );
+    ptA = vec4( ptFromOklab( mix( ptToOklab( ptA.rgb ), ptToOklab( ptB.rgb ), ptMix ) ),
+                mix( ptA.a, ptB.a, ptMix ) );
+  }
+  diffuseColor *= ptA;
+#endif
+`);
+}
+function installMix(mat) {
+  if (!mat || mat.userData?.mix) return mat;
+  mat.userData = mat.userData ?? {};
+  mat.userData.mix = { factor: { value: 0 }, mapB: { value: BLANK }, ratio: { value: new THREE.Vector2(1, 1) } };
+  if (!mat.map) mat.map = BLANK;                  
+  mat.onBeforeCompile = ptOnBeforeCompile;
+  mat.customProgramCacheKey = () => 'pt-mix';
+  return mat;
+}
+function setMapB(mat, tex) {
+  const u = mat.userData?.mix; if (!u) return;
+  const old = u.mapB.value;
+  const next = tex ?? BLANK;
+  if (old === next) return;
+  if (old) releaseTex(old);
+  if (next) { const e = texPool.get(next.userData?.poolKey); if (e) e.refs++; }
+  u.mapB.value = next;
+}
+
+const RMQ = matchMedia('(prefers-reduced-motion: reduce)');
+let reduceMotion = RMQ.matches;
+RMQ.addEventListener?.('change', (e) => { reduceMotion = e.matches; });
+
+function bezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const fx = (t) => ((ax * t + bx) * t + cx) * t;
+  const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+  return (x) => {
+    let t = x;
+    for (let i = 0; i < 6; i++) { const e = fx(t) - x, d = dx(t); if (Math.abs(e) < 1e-5 || Math.abs(d) < 1e-7) break; t -= e / d; }
+    t = Math.min(1, Math.max(0, t));
+    return ((ay * t + by) * t + cy) * t;
+  };
+}
+const EASE_SETTLE = bezier(0.35, 0, 0.15, 1);
+const SWAP_MS = (DEBUG && Number(q.get('swapms'))) || 160;
+const NOMINAL_FRAME = 1000 / 60;
+const STALL_MS = 2 * NOMINAL_FRAME;
+
+const uploaded = new WeakSet();                   
+let uploadBytes = 0;                              
+const GATE_PX = new Uint8Array(4);                
+const GATE_MIN_BYTES = 256 * 256 * 4;
+function closeResidencyGate() {
+  if (uploadBytes < GATE_MIN_BYTES) { uploadBytes = 0; return; }
+  uploadBytes = 0;
+  timed('flush', () => {
+    try { const gl = renderer.getContext(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, GATE_PX); }
+    catch {   }
+  });
+}
+const tweens = new Set();                         
+let openBatch = null;                             
+let stepMarked = false;                           
+function tweenActive() { return tweens.size > 0; }
+function commitTween(tw) {
+  for (const mat of tw.mats.keys()) {
+    const u = mat.userData.mix;
+    const b = u.mapB.value;
+    setMap(mat, 'map', b === BLANK ? null : b);
+    setMapB(mat, null);
+    u.factor.value = 0;
+    u.ratio.value.set(1, 1);
+  }
+  tweens.delete(tw);
+  if (openBatch === tw) openBatch = null;
+}
+function stepTweens(now) {
+  for (const tw of [...tweens]) {
+    if (!tw.started) {
+      closeResidencyGate();                         
+      tw.started = true; tw.t0 = now - NOMINAL_FRAME; tw.owed = 0;
+      if (!stepMarked) { stepMarked = true; stage('tween:frame1'); }
+    } else {
+      const gap = now - tw.lastStep;
+      if (gap > STALL_MS) {
+        const excuse = Math.max(0, Math.min(gap - NOMINAL_FRAME, SWAP_MS - tw.owed));
+        tw.t0 += excuse; tw.owed += excuse;
+      }
+    }
+    tw.lastStep = now;
+    const p = (now - tw.t0) / SWAP_MS;
+    if (p >= 1) { if (tweens.size === 1) stage('tween:done'); commitTween(tw); continue; }
+    const e = EASE_SETTLE(Math.max(0, p));
+    for (const [mat, from] of tw.mats) mat.userData.mix.factor.value = from + (1 - from) * e;
+  }
+}
+function tweenOf(mat) { for (const tw of tweens) if (tw.mats.has(mat)) return tw; return null; }
+function stopTween(mat) {
+  const tw = tweenOf(mat); if (!tw) return;
+  tw.mats.delete(mat);
+  if (!tw.mats.size) { tweens.delete(tw); if (openBatch === tw) openBatch = null; }
+}
+function joinTween(mat, from) {
+  if (!openBatch || !tweens.has(openBatch)) {
+    openBatch = { mats: new Map(), t0: performance.now(), started: false };
+    tweens.add(openBatch);
+    if (tweens.size === 1) { stepMarked = false; stage('tween:start'); }
+    queueMicrotask(() => { openBatch = null; });
+  }
+  openBatch.mats.set(mat, from);
+}
+
+function fadeMap(mat, tex) {
+  const u = mat.userData?.mix;
+  const from = mat.map;
+  const instant = !u || !tex || !from || from === BLANK || reduceMotion;
+  log('[swap]', mat.userData?.kind ?? '?', instant ? 'instant' : 'lerp',
+      { mix: !!u, tex: !!tex, from: from === BLANK ? 'BLANK' : (from ? 'tex' : 'none'), reduce: reduceMotion });
+  if (instant) {
+    stopTween(mat);
+    if (u) { setMapB(mat, null); u.factor.value = 0; u.ratio.value.set(1, 1); }
+    setMap(mat, 'map', tex);
+    return;
+  }
+  if (from === tex && !tweenOf(mat)) return;
+  if (!uploaded.has(tex)) {
+    uploaded.add(tex);
+    timed('upload', () => {
+      try { renderer.initTexture(tex); } catch {   }
+    });
+    const im = tex.image;
+    if (!uploadBytes) queueMicrotask(closeResidencyGate);
+    uploadBytes += ((im?.width | 0) * (im?.height | 0) || 1) * 4;
+  }
+  setMapB(mat, tex);
+  const fx = from.repeat.x || 1, fy = from.repeat.y || 1;
+  u.ratio.value.set((tex.repeat.x || 1) / fx, (tex.repeat.y || 1) / fy);
+  const at = tweenOf(mat) ? u.factor.value : 0;
+  stopTween(mat);
+  joinTween(mat, at);
+  u.factor.value = at;
+  dirty();
+}
+
+function calmDark(m, lum) {
+  const t = Math.min(1, Math.max(0, (lum - 0.24) / 0.28));
+  if (m.normalScale) m.normalScale.set(0.18 + 0.37 * t, 0.18 + 0.37 * t);
+  m.sheen = 0.10 + 0.18 * t;
+  m.roughness = 0.9 - 0.08 * t;
+}
+
+const lateFabric = [];            
+
+function retile(m, kind) {
+  m.userData.kind = kind;
+  setMap(m, 'bumpMap', null);     
+  const url = m.userData.clothUrl;
+  if (!url) { fadeMap(m, null); return; }
+  const c = cropCache.get(url);
+  if (c) { fadeMap(m, acquireTex(url, kind, c.canvas)); return; }
+  loadCropped(url, (cv) => { if (cv && m.userData.clothUrl === url) fadeMap(m, acquireTex(url, kind, cv)); });
+}
+
+function applyFabric(mat, url, kind) {
+  mat.userData.clothUrl = url;
+  if (mat.userData.photoUnusable) { queueMicrotask(() => paintNoPhoto(mat, 'unusable')); return; }
+  loadCropped(url, (canvas, lum) => {
+    if (mat.userData.clothUrl !== url) return;       
+    if (!canvas) { paintNoPhoto(mat); return; }
+    mat.userData.lum = lum;
+    const tex = acquireTex(url, kind, canvas);
+    fadeMap(mat, tex);
+    if (kind === 'form') { setMap(mat, 'bumpMap', tex); mat.bumpScale = 0.3; }
+    calmDark(mat, lum);
+    mat.color?.set(0xffffff);
+    for (const e of lateFabric) {
+      if (e.src !== mat) continue;                    
+      e.m.userData.clothUrl = url; e.m.userData.lum = lum;
+      retile(e.m, e.kind); calmDark(e.m, lum); e.m.color?.set(0xffffff);
+    }
+    if (mat === cloth) {
+      window.PT_STATE.cloth = true;                     
+      setSwatchMissing(null);                           
+      if (!cur.lining) paintLining();                   
+    }
+  });
+}
+
+function paintNoPhoto(mat, why) {
+  const known = hexTrust(mat.userData);
+  const fb = known ?? NO_COLOUR;
+  paintFlat(mat, mat.userData.kind, fb);
+  for (const e of lateFabric) if (e.src === mat) paintFlat(e.m, e.kind, fb);
+  if (mat === cloth) setSwatchMissing(why ?? (known !== null ? 'measured' : 'unmeasured'));
+  dirty();
+}
+function paintFlat(m, kind, fb) {
+  if (kind) m.userData.kind = kind;
+  m.userData.clothUrl = null;
+  setMap(m, 'bumpMap', null);
+  m.color?.set(0xffffff);            
+  fadeMap(m, flatTex(fb));
+}
+
+function clearFabric(mat, fallback) {
+  mat.userData.clothUrl = null;
+  if (mat === cloth) setSwatchMissing(null);        
+  if (mat === cloth && !cur.lining) paintLining();
+  stopTween(mat); setMapB(mat, null);
+  setMap(mat, 'map', null); setMap(mat, 'bumpMap', null);
+  mat.color?.set(fallback ?? 0xffffff);
+  for (const e of lateFabric) {
+    if (e.src !== mat) continue;
+    e.m.userData.clothUrl = null;
+    stopTween(e.m); setMapB(e.m, null);
+    setMap(e.m, 'map', null); setMap(e.m, 'bumpMap', null);
+    e.m.color?.set(fallback ?? 0xffffff);
+  }
+}
+
+function fabricMaterial(url, extra = {}, kind = 'suit', hex = null, meta = {}) {
+  const m = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff, roughness: 0.8, metalness: 0, sheen: 0.4,
+    sheenRoughness: 0.9, sheenColor: new THREE.Color(0x888078), ...extra,
+  });
+  m.userData = { hex, ...meta };
+  installMix(m);
+  if (url) applyFabric(m, url, kind);
+  return m;
+}
+
+const cloth = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff, roughness: 0.82, metalness: 0.0,
+  sheen: 0.5, sheenRoughness: 0.9, sheenColor: new THREE.Color(0x888078),
+});
+cloth.userData = { hex: cur.hex, hexBasis: cur.hexbasis, pat: cur.pat, hexStrict: true,
+                   photoUnusable: cur.photounusable };
+installMix(cloth);
+noteAll();
+if (cur.cloth) applyFabric(cloth, cur.cloth, 'form');    
+
+const shirtMat = fabricMaterial(cur.shirt, { roughness: 0.6, sheen: 0.2,
+                                  polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8 },
+                                'shirt', cur.shirthex,
+                                { photoUnusable: cur.shirtphotounusable });
+if (!cur.shirt) shirtMat.color.set(0xf4f1ea);            
+
+const liningMat = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff, roughness: 0.5, metalness: 0, sheen: 0.9,
+  sheenRoughness: 0.4, sheenColor: new THREE.Color(0xaFa89a),
+  side: THREE.BackSide,
+});
+liningMat.userData = { hex: cur.lininghex };
+installMix(liningMat);
+const liningQueue = [];           
+
+function makeLiningClone(sink) {
+  const c = liningMat.clone();
+  c.map = null;                   
+  c.userData = {};
+  installMix(c);                  
+  c.side = THREE.DoubleSide;
+  c.polygonOffset = true; c.polygonOffsetFactor = 1; c.polygonOffsetUnits = 2;
+  if (liningMat.map) setMap(c, 'map', liningMat.map);
+  liningQueue.push(c);
+  sink?.push(c);
+  return c;
+}
+
+const liningSource = () => cur.lining || cur.cloth || null;
+function paintLining() {
+  const url = liningSource();
+  const tint = cur.lining ? 0xffffff : 0xcfcac2;
+  const wear = (t, hex) => {
+    const c = hex ?? tint;
+    fadeMap(liningMat, t); liningMat.color.setHex(c);
+    for (const m of liningQueue) { fadeMap(m, t); m.color?.setHex(c); }
+    paintLiningChip();
+  };
+  if (!url) { wear(null); return; }
+  if (!cur.lining && cur.photounusable) { wear(null, NO_COLOUR); return; }
+  loadCropped(url, (canvas) => {
+    if (liningSource() !== url) return;                  
+    if (canvas) return wear(acquireTex(url, 'lining', canvas));
+    wear(null, hexInt(cur.lining ? cur.lininghex : cur.hex) ?? undefined);
+  });
+}
+function setLining(url) { cur.lining = url || null; paintLining(); }
+
+const SKIP = /shoe|boot|shirt|tie|head|hand|skin|hair|face|eye|glass/i;
+const SHIRTISH = /shirt|collar|cuff(?!link)/i;
+const TROUSERISH = /pant|trouser|leg(?!acy)/i;
+const VESTISH = /waistcoat|vest/i;
+const SHOEISH = /shoe|boot|oxford|derby/i;
+const BUTTONISH = /^Mens_Jacket_2_3\//;
+const HORN = { 'Dark horn': 0x241d17, 'Natural horn': 0x8a7354 };
+const SHOE_TONES = { black: 0x1c1917, brown: 0x6b4a2e, oxblood: 0x5a2b2b, white: 0xEDE9E2 };
+
+const BUTTON_FINISH = {
+  horn:  { roughness: 0.35, metalness: 0.05, clearcoat: 0.60, clearcoatRoughness: 0.30,
+           sheen: 0, sheenColor: 0x000000 },
+  silk:  { roughness: 0.30, metalness: 0.00, clearcoat: 0.22, clearcoatRoughness: 0.14,
+           sheen: 0.45 },
+};
+const isCoveredSilk = (tone) => tone === 'Covered silk';
+function liftToward(hex, k) {
+  const r = (hex >> 16) & 255, g = (hex >> 8) & 255, b = hex & 255;
+  const m = (v) => Math.round(v + (255 - v) * k);
+  return (m(r) << 16) | (m(g) << 8) | m(b);
+}
+function buttonRecipe() {
+  if (isCoveredSilk(cur.buttons)) {
+    const own = cur.photounusable ? null : hexInt(cur.hex);
+    const color = own ?? NO_COLOUR;
+    return { color, ...BUTTON_FINISH.silk, sheenColor: liftToward(color, 0.55) };
+  }
+  return { color: HORN[cur.buttons] ?? HORN['Dark horn'], ...BUTTON_FINISH.horn };
+}
+function wearRecipe(m, r) {
+  if (!m) return;
+  m.color?.setHex(r.color);
+  m.roughness = r.roughness; m.metalness = r.metalness;
+  m.clearcoat = r.clearcoat; m.clearcoatRoughness = r.clearcoatRoughness;
+  if ('sheen' in m) { m.sheen = r.sheen; m.sheenColor?.setHex(r.sheenColor); }
+  m.needsUpdate = true;
+}
+
+const buttonMeshes = [];          
+const hornRegistry = [];          
+function makeHornMat(root) {
+  const m = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
+  wearRecipe(m, buttonRecipe());
+  hornRegistry.push({ mat: m, root: root ?? currentRoot });
+  return m;
+}
+function setButtons(tone) {
+  cur.buttons = (HORN[tone] !== undefined || isCoveredSilk(tone)) ? tone : 'Dark horn';
+  repaintButtons();
+}
+function repaintButtons() {
+  const r = buttonRecipe();
+  for (const m of buttonMeshes) wearRecipe(m.material, r);
+  for (const e of hornRegistry) wearRecipe(e.mat, r);        
+  dirty();
+}
+
+const shoeRegistry = [];          
+function shoeMaterial(tone, orig) {
+  if (tone === 'black') {
+    const m = orig.clone();
+    m.color = new THREE.Color(0xffffff);    
+    return m;
+  }
+  const m = new THREE.MeshPhysicalMaterial({
+    color: SHOE_TONES[tone] ?? SHOE_TONES.brown,
+    roughness: 0.34, metalness: 0.04, sheen: 0.25,
+    sheenColor: new THREE.Color(0x554433),
+  });
+  if (orig.normalMap) m.normalMap = orig.normalMap;
+  if (orig.aoMap) m.aoMap = orig.aoMap;
+  return m;
+}
+function setShoes(tone) {
+  cur.shoes = SHOE_TONES[tone] ? tone : 'black';
+  for (const e of shoeRegistry) {
+    const old = e.mesh.material;
+    e.mesh.material = shoeMaterial(cur.shoes, e.orig);
+    if (old && old !== e.orig) old.dispose();           
+  }
+  dirty();
+}
+
+const origMats = new Map();
+const PAINT = [0xe74c3c, 0xf1c40f, 0x2ecc71, 0x3498db, 0x9b59b6, 0xe67e22, 0x1abc9c, 0xd35400];
+let paintIdx = 0;
+let currentRoot = null, currentSink = null;
+
+function garb(o, kind, srcMat) {
+  const m = srcMat.clone();
+  m.map = null; m.bumpMap = null;             
+  const old = origMats.get(o.name) ?? (Array.isArray(o.material) ? o.material[0] : o.material);
+  if (old?.normalMap) {
+    m.normalMap = old.normalMap;
+    m.normalScale = new THREE.Vector2(0.55, 0.55);    
+  }
+  if (old?.aoMap) m.aoMap = old.aoMap;
+  m.sheen = 0.28;                             
+  m.userData = { clothUrl: srcMat.userData?.clothUrl ?? null, lum: srcMat.userData?.lum,
+                 hex: srcMat.userData?.hex ?? null, hexBasis: srcMat.userData?.hexBasis ?? null,
+                 pat: srcMat.userData?.pat ?? null, hexStrict: srcMat.userData?.hexStrict ?? false,
+                 photoUnusable: srcMat.userData?.photoUnusable ?? false };
+  installMix(m);                  
+  if (srcMat.userData?.lum !== undefined) calmDark(m, srcMat.userData.lum);
+  lateFabric.push({ m, kind, src: srcMat, root: currentRoot });
+  const srcFlat = srcMat.map?.userData?.flat;
+  if (srcFlat != null) paintFlat(m, kind, srcFlat); else retile(m, kind);
+  const kinds = o.geometry?.userData?.maskGroups;
+  o.material = kinds
+    ? kinds.map((k) => (k === 'lining' ? makeLiningClone(currentSink) : k === 'horn' ? makeHornMat(currentRoot) : m))
+    : m;
+}
+
+function dressInCloth(root, suitMat) {
+  suitMat = suitMat ?? cloth;
+  const report = [];
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    o.castShadow = true;
+    o.receiveShadow = true;                   
+    if (!origMats.has(o.name) && !Array.isArray(o.material)) origMats.set(o.name, o.material);
+    const name = `${o.name}/${o.material?.name ?? ''}`;
+    if (BUTTONISH.test(name)) {
+      o.material = new THREE.MeshPhysicalMaterial({ color: HORN[cur.buttons] ?? HORN['Dark horn'],
+        roughness: 0.35, metalness: 0.05, clearcoat: 0.6, clearcoatRoughness: 0.3 });
+      buttonMeshes.push(o);
+      report.push(`buttons: ${name}`);
+      return;
+    }
+    const whole = wholeHornEntry(o);
+    o.userData.hornWhole = !!whole;               
+    if (whole) {
+      o.material = makeHornMat(currentRoot);
+      report.push(`buttons(mask, whole): ${name} ${whole.tris} tris`);
+      return;
+    }
+    if (DEBUG_PAINT && /jacket/i.test(name)) {           
+      const c = PAINT[paintIdx++ % PAINT.length];
+      o.material = new THREE.MeshStandardMaterial({ color: c, side: THREE.DoubleSide });
+      report.push(`PAINT ${paintIdx - 1} #${c.toString(16)}: ${name}`);
+      return;
+    }
+    if (SHIRTISH.test(name)) { garb(o, 'shirt', shirtMat); report.push(`shirted: ${name}`); return; }
+    if (SHOEISH.test(name)) {
+      const orig = origMats.get(o.name) ?? o.material;
+      shoeRegistry.push({ mesh: o, orig, root: currentRoot });
+      o.material = shoeMaterial(cur.shoes, orig);
+      report.push(`shoes(${cur.shoes}): ${name}`);
+      return;
+    }
+    if (SKIP.test(name)) { report.push(`kept: ${name}`); return; }
+    if (TROUSERISH.test(name)) { garb(o, 'trouser', suitMat); report.push(`trousered: ${name}`); return; }
+    if (VESTISH.test(name)) { garb(o, 'vest', suitMat); report.push(`waistcoated: ${name}`); return; }
+    garb(o, 'suit', suitMat);
+    report.push(`clothed: ${name}`);
+  });
+  log('[suit pipeline]', report);
+}
+
+function assertButtons(root) {
+  if (DEBUG_PAINT) return;
+  let licensed = false;
+  root.traverse((o) => { if (o.isMesh && /^Mens_Jacket_2/.test(o.name)) licensed = true; });
+  if (!licensed) return;                                        
+  if (!buttonMask) console.warn('[buttons] no button mask for this hero: only the placket page can be horn');
+  const mine = buttonMeshes.filter((m) => {
+    let p = m; while (p) { if (p === root) return true; p = p.parent; } return false;
+  });
+  if (mine.length !== 1) { console.error('[buttons] expected 1 mesh, got', mine.length); return; }
+  const s = new THREE.Box3().setFromObject(mine[0]).getSize(new THREE.Vector3());
+  const j = new THREE.Box3();
+  root.traverse((o) => { if (o.isMesh && /jacket/i.test(o.name)) j.expandByObject(o); });
+  if (j.isEmpty()) return;
+  const jv = j.getSize(new THREE.Vector3());
+  if ((s.x*s.y*s.z) > (jv.x*jv.y*jv.z) * 0.01) {
+    console.error('[buttons] mesh is too large to be a placket — chunk numbering changed');
+    for (const m of mine) {                                     
+      const i = buttonMeshes.indexOf(m); if (i >= 0) buttonMeshes.splice(i, 1);
+      const worn = m.material; garb(m, 'suit', suitMatOf(root)); worn?.dispose?.();
+    }
+  }
+}
+
+let interiorMask = null, buttonMask = null;
+const MASK_FOR = { 'assets/suit/Mens_Suit_2.slim.glb': 'assets/suit/interior-mask.slim.json' };
+const BUTTON_MASK_FOR = { 'assets/suit/Mens_Suit_2.slim.glb': 'assets/suit/button-mask.slim.json' };
+function loadMaskFor(heroUrl) {
+  const get = (f) => fetch(f).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  return Promise.all([
+    get(MASK_FOR[heroUrl] ?? 'assets/suit/interior-mask.json').then((m) => (interiorMask = m)),
+    get(BUTTON_MASK_FOR[heroUrl] ?? 'assets/suit/button-mask.json').then((m) => (buttonMask = m)),
+  ]);
+}
+
+function wholeHornEntry(o) {
+  const e = buttonMask?.[o.name];
+  if (!e || e.horn !== e.tris) return null;
+  if (e.hornDiag !== undefined && Math.abs(e.hornDiag - 1) > 1e-6) return null;    
+  if ((o.geometry?.index?.count ?? 0) / 3 !== e.tris) return null;
+  return hornPlausible(o, e) ? e : null;
+}
+
+function hornPlausible(o, entry, hornBox) {
+  const g = o.geometry;
+  if (!entry.shape) return true;                       
+  if (!g.boundingBox) g.computeBoundingBox();
+  const s = g.boundingBox.getSize(new THREE.Vector3());
+  const d = s.length();
+  if (!(d > 0)) return false;
+  const got = [s.x / d, s.y / d, s.z / d];
+  const off = Math.max(...got.map((v, i) => Math.abs(v - entry.shape[i])));
+  if (off > 0.01) {
+    console.error('[buttons] page shape does not match the mask on', o.name,
+                  '— chunk numbering or the mesh changed. Leaving it in cloth.',
+                  got.map((v) => v.toFixed(4)), 'vs', entry.shape);
+    return false;
+  }
+  if (hornBox && entry.hornDiag !== undefined) {
+    const ratio = hornBox.getSize(new THREE.Vector3()).length() / d;
+    if (Math.abs(ratio - entry.hornDiag) > 0.02) {
+      console.error('[buttons] masked triangles on', o.name, 'span', ratio.toFixed(4),
+                    'of the page, expected', entry.hornDiag, '— that is not a button. Leaving it in cloth.');
+      return false;
+    }
+  }
+  return true;
+}
+
+const KIND = ['cloth', 'lining', 'horn'];
+function splitByMask(o, entry, bEntry) {
+  const g = o.geometry;
+  if (!g.index || g.userData.maskSplit) return false;
+  const idx = g.index.array;
+  const triCount = idx.length / 3;
+  const kind = new Uint8Array(triCount);               
+  const mark = (e, v, tag) => {
+    if (!e) return false;
+    if (e.tris !== triCount) { console.warn(`[${tag}] mask/geometry mismatch on`, o.name, e.tris, triCount); return false; }
+    for (let i = 0; i < e.rle.length; i += 2) for (let t = e.rle[i]; t < e.rle[i] + e.rle[i + 1]; t++) kind[t] = v;
+    return true;
+  };
+  mark(entry, 1, 'lining');
+  if (mark(bEntry, 2, 'buttons')) {
+    const box = new THREE.Box3(), p = g.attributes.position, v = new THREE.Vector3();
+    for (let t = 0; t < triCount; t++) if (kind[t] === 2) for (let k = 0; k < 3; k++) box.expandByPoint(v.fromBufferAttribute(p, idx[t * 3 + k]));
+    if (!hornPlausible(o, bEntry, box)) for (let t = 0; t < triCount; t++) if (kind[t] === 2) kind[t] = 0;
+  }
+  const lists = [[], [], []];
+  for (let t = 0; t < triCount; t++) lists[kind[t]].push(idx[t * 3], idx[t * 3 + 1], idx[t * 3 + 2]);
+  if (!lists[1].length && !lists[2].length) return false;
+  const newIdx = new idx.constructor(idx.length);
+  const kinds = [];
+  let at = 0;
+  g.clearGroups();
+  for (let k = 0; k < 3; k++) {
+    if (!lists[k].length) continue;
+    newIdx.set(lists[k], at);
+    g.addGroup(at, lists[k].length, kinds.length);
+    kinds.push(KIND[k]);
+    at += lists[k].length;
+  }
+  g.setIndex(new THREE.BufferAttribute(newIdx, 1));
+  g.userData.maskSplit = true;
+  g.userData.maskGroups = kinds;
+  const worn = Array.isArray(o.material) ? o.material[0] : o.material;
+  o.material = kinds.map((k) => (k === 'lining' ? makeLiningClone(currentSink) : k === 'horn' ? makeHornMat(currentRoot) : worn));
+  return true;
+}
+
+const heroRoots = [];
+const suitInfo = new Map();       
+
+function suitMatOf(root) { return suitInfo.get(root)?.mat ?? cloth; }
+
+function fitToStage(root) {
+  root.position.set(0, 0, 0);
+  root.scale.setScalar(1);                           
+  const box = new THREE.Box3().setFromObject(root);
+  const size = box.getSize(new THREE.Vector3());
+  root.scale.setScalar(118 / (size.y || 118));       
+  const box2 = new THREE.Box3().setFromObject(root);
+  root.position.y -= box2.min.y - (-31);             
+  const c = box2.getCenter(new THREE.Vector3());
+  root.position.x -= c.x; root.position.z -= c.z;
+}
+
+function placeSuit(g, suitMat, offsetX, isHero) {
+  const root = g.scene;
+  formSets.forEach((s) => (s.visible = false));
+  const info = { mat: suitMat, homeX: 0, liningClones: [] };
+  suitInfo.set(root, info);
+  currentRoot = root; currentSink = info.liningClones;
+  root.traverse((o) => {
+    if (!o.isMesh || !o.geometry?.index || !o.geometry.attributes?.position) return;
+    if (o.geometry.userData.normalsRebuilt) return;               
+    o.geometry.computeVertexNormals();
+    o.geometry.userData.normalsRebuilt = true;
+  });
+  root.traverse((o) => { if (VESTISH.test(o.name)) o.visible = cur.vest; });
+  {
+    root.position.set(0, 0, 0); root.scale.setScalar(1);
+    const pre = new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
+    measureDensity(root, 118 / (pre.y || 118));
+  }
+  dressInCloth(root, suitMat);
+  root.traverse((o) => {
+    if (!o.isMesh || BUTTONISH.test(`${o.name}/`) || o.userData.hornWhole) return;
+    const lin = DEBUG_PAINT ? null : interiorMask?.[o.name];
+    const btn = buttonMask?.[o.name];
+    if (lin || btn) splitByMask(o, lin, btn);
+  });
+  assertButtons(root);
+  fitToStage(root);
+  info.homeX = root.position.x;
+  root.position.x = info.homeX + offsetX;
+  scene.add(root);
+  heroRoots.push(root);
+  currentRoot = null; currentSink = null;
+  shadowRefresh();
+  if (isHero) {
+    window.PT_STATE.hero = true;
+    try { parent.postMessage({ ptHero: 1 }, '*'); } catch {   }
+  }
+  frameSubject();
+}
+
+function setOffset(root, x) {
+  const info = suitInfo.get(root);
+  if (info) root.position.x = info.homeX + x;
+  else root.position.x = x;
+}
+
+function disposeSuit(root) {
+  const info = suitInfo.get(root);
+  const clones = info?.liningClones ?? [];
+  for (const c of clones) {
+    const i = liningQueue.indexOf(c); if (i >= 0) liningQueue.splice(i, 1);
+    stopTween(c); setMapB(c, null);
+    setMap(c, 'map', null); c.dispose();
+  }
+  for (let i = lateFabric.length - 1; i >= 0; i--) if (lateFabric[i].root === root) lateFabric.splice(i, 1);
+  for (let i = shoeRegistry.length - 1; i >= 0; i--) if (shoeRegistry[i].root === root) shoeRegistry.splice(i, 1);
+  for (let i = buttonMeshes.length - 1; i >= 0; i--) {
+    let p = buttonMeshes[i]; while (p && p !== root) p = p.parent;
+    if (p === root) { buttonMeshes[i].material?.dispose?.(); buttonMeshes.splice(i, 1); }
+  }
+  for (let i = hornRegistry.length - 1; i >= 0; i--) {
+    if (hornRegistry[i].root !== root) continue;
+    hornRegistry[i].mat.dispose();
+    hornRegistry.splice(i, 1);
+  }
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    for (const m of mats) {
+      if (!m || clones.includes(m) || m === liningMat) continue;
+      if (origMats.get(o.name) === m) continue;                   
+      stopTween(m); setMapB(m, null);
+      setMap(m, 'map', null); setMap(m, 'bumpMap', null);
+      m.dispose();
+    }
+  });
+  if (info) suitInfo.delete(root);
+  const j = heroRoots.indexOf(root); if (j >= 0) heroRoots.splice(j, 1);
+}
+
+function setVest(on) {
+  cur.vest = !!on;
+  heroRoots.forEach((r) => r.traverse((o) => { if (VESTISH.test(o.name)) o.visible = cur.vest; }));
+  shadowRefresh();
+}
+
+function subjectBox() {
+  const subjects = heroRoots.length ? heroRoots : formSets.filter((s) => s.visible);
+  if (!subjects.length) return null;
+  const box = new THREE.Box3();
+  subjects.forEach((s) => box.expandByObject(s));
+  return box;
+}
+const subj = { center: new THREE.Vector3(0, 36, 0), top: 87, bottom: -31, homeDist: 231, ready: false };
+function tagBand(viewportPx) {
+  if (!heroTag && !compareTag) return 0;
+  const h = Math.max(1, viewportPx ?? (renderer.domElement.clientHeight || paneH()));
+  return Math.min(0.2, (Math.max(TAG_MIN_PX, h * 0.05) * 1.9) / h);
+}
+const tanFov = () => 2 * Math.tan((camera.fov * Math.PI) / 360);
+const HOME_DIR = new THREE.Vector3(0.16, 0.06, 1).normalize();
+
+let frameMargin = null;
+const FRAME_AIR_PX = 16;
+function setFrame(kind) {
+  const want = kind === 'close' ? 1.06 : null;
+  if (frameMargin === want) return;
+  frameMargin = want;
+  if (!viewLocked) frameSubject();
+}
+function frameSubject(margin) {
+  margin = margin ?? frameMargin ?? (camera.aspect < 0.9 ? 1.3 : 1.2);    
+  const paneHpx = Math.max(1, renderer.domElement.clientHeight || paneH() || 1);
+  margin = Math.max(margin, (paneHpx + 2 * FRAME_AIR_PX) / paneHpx);
+  const box = subjectBox();
+  if (!box || !Number.isFinite(box.min.y) || !Number.isFinite(box.max.y)) return;
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  const band = tagBand();
+  const tan = tanFov();
+  const fitH = (size.y * margin) / ((1 - band) * tan);
+  const fitW = (size.x * margin) / (tan * camera.aspect);
+  const dist = Math.max(fitH, fitW, 70);
+  if (!Number.isFinite(dist)) return;
+  const dir = HOME_DIR.clone();
+  const aim = center.clone();
+  aim.y += (band * tan * dist) / 2;                  
+  controls.target.copy(aim);
+  camera.position.copy(aim).addScaledVector(dir, dist);
+  controls.minDistance = Math.max(18, dist * 0.12, textureFloor());
+  controls.maxDistance = dist * 2.2;
+  controls.update();
+  subj.center.copy(aim); subj.top = box.max.y; subj.bottom = box.min.y; subj.homeDist = dist;
+  subj.ready = true;
+  setZoomEnabled(true);
+  setViewEnabled(true);         
+  dirty();
+}
+function textureFloor() {
+  const url = cur.cloth;
+  const hit = url ? cropCache.get(url) : null;
+  if (!hit || !(hit.side > 0)) return 0;
+  const texelsPerUnit = (hit.side * CM_PER_UNIT) / Math.max(0.4, tileCmFor(url));
+  const H = renderer.domElement.height || 1;
+  const d = H / (tanFov() * Math.max(1e-6, texelsPerUnit));
+  return Number.isFinite(d) && d > 0 ? d : 0;
+}
+function subjectWidth() {
+  const r = heroRoots[0] ?? formSets[0];
+  if (!r) return 47.4;
+  return new THREE.Box3().setFromObject(r).getSize(new THREE.Vector3()).x || 47.4;
+}
+function dolly(factor) {
+  const v = camera.position.clone().sub(controls.target);
+  const d0 = v.length();
+  if (!Number.isFinite(d0) || d0 < 1e-4) return;                   
+  const len = THREE.MathUtils.clamp(d0 * factor, controls.minDistance, controls.maxDistance);
+  const aim = controls.target.clone();
+  if (subj.ready) {
+    const span = Math.max(1, subj.homeDist - controls.minDistance);
+    const t = Math.pow(THREE.MathUtils.clamp((subj.homeDist - len) / span, 0, 1), 0.6);
+    const chestY = subj.bottom + (subj.top - subj.bottom) * 0.78;  
+    aim.copy(subj.center);
+    aim.y = THREE.MathUtils.lerp(subj.center.y, chestY, t);
+  }
+  const pos = aim.clone().addScaledVector(v.normalize(), len);
+  if (!Number.isFinite(len) || !Number.isFinite(aim.x + aim.y + aim.z) ||
+      !Number.isFinite(pos.x + pos.y + pos.z)) { console.error('[zoom] refused a non-finite step'); return; }
+  userAdjusted = true;
+  controls.target.copy(aim);
+  camera.position.copy(pos);
+  controls.update();
+  dirty();
+}
+function setZoomEnabled(on) {
+  for (const id of ['zin', 'zout', 'zreset']) {
+    const b = document.getElementById(id);
+    if (b) { b.disabled = !on; b.setAttribute('aria-disabled', String(!on)); }
+  }
+}
+setZoomEnabled(false);
+document.getElementById('zin')?.addEventListener('click', () => dolly(0.75));
+document.getElementById('zout')?.addEventListener('click', () => dolly(1.34));
+document.getElementById('zreset')?.addEventListener('click', () => {
+  userAdjusted = false;
+  viewLocked = false;
+  closeInteriorCard();
+  frameSubject();
+  markCurrentView();
+});
+
+const TAU = Math.PI * 2;
+const FRONT_AZ = Math.atan2(HOME_DIR.x, HOME_DIR.z);
+const VIEWS = [
+  { id: 'vfront', off: 0,          name: 'the front' },
+  { id: 'vside',  off: Math.PI / 2, name: 'the side'  },
+  { id: 'vback',  off: Math.PI,     name: 'the back'  },
+];
+const YAW_STEP = (15 * Math.PI) / 180;
+const VIEW_NEAR = (3 * Math.PI) / 180;
+
+const viewBtn = (id) => document.getElementById(id);
+const azimuthNow = () => Math.atan2(camera.position.x - controls.target.x,
+                                    camera.position.z - controls.target.z);
+const wrapPi = (a) => ((a + Math.PI) % TAU + TAU) % TAU - Math.PI;    
+
+function setAzimuth(theta) {
+  const off = camera.position.clone().sub(controls.target);
+  const s = new THREE.Spherical().setFromVector3(off);
+  if (!Number.isFinite(s.radius) || s.radius < 1e-4) return;          
+  s.theta = theta;                                                    
+  const pos = controls.target.clone().add(new THREE.Vector3().setFromSpherical(s));
+  if (!Number.isFinite(pos.x + pos.y + pos.z)) return;                
+  userAdjusted = true;
+  lastInputAt = performance.now();
+  dismissHint();
+  camera.position.copy(pos);
+  controls.update();
+  markCurrentView();
+  dirty();
+}
+function yawBy(rad) { setAzimuth(azimuthNow() + rad); }
+
+let shownView = '';
+function markCurrentView() {
+  const rel = wrapPi(azimuthNow() - FRONT_AZ);
+  let at = '';
+  for (const v of VIEWS) if (Math.abs(wrapPi(rel - v.off)) <= VIEW_NEAR) { at = v.id; break; }
+  if (at === shownView) return;                                       
+  shownView = at;
+  for (const v of VIEWS) viewBtn(v.id)?.setAttribute('aria-checked', String(v.id === at));
+  paintViewName();
+}
+
+const BAND_GONE = matchMedia('(max-height:220px)');
+const bandVisible = () => {
+  const b = document.getElementById('topband');
+  return !!b && getComputedStyle(b).display !== 'none';
+};
+function canvasWhere() {
+  const at = VIEWS.find((v) => v.id === shownView);
+  return at ? `Seen from ${at.name}.` : 'Turned.';
+}
+function paintViewName() {
+  const at = VIEWS.find((v) => v.id === shownView);
+  const where = at ? `, seen from ${at.name}` : ', turned';
+  const ops = 'Drag to turn it, or turn it with the left and right arrow keys. ' +
+              'Press plus to come closer, minus to go back, zero for the whole suit.' +
+              (bandVisible() ? ' The FRONT, SIDE and BACK buttons set the view.' : '');
+  renderer.domElement.setAttribute('aria-label', `Your suit${where}. ${ops}`);
+}
+BAND_GONE.addEventListener?.('change', paintViewName);
+
+function setViewEnabled(on) {
+  for (const v of VIEWS) {
+    const b = viewBtn(v.id);
+    if (b) { b.disabled = !on; b.setAttribute('aria-disabled', String(!on)); }
+  }
+}
+setViewEnabled(false);        
+
+let roving = 0;
+function focusView(i) {
+  roving = (i + VIEWS.length) % VIEWS.length;
+  for (let k = 0; k < VIEWS.length; k++) viewBtn(VIEWS[k].id)?.setAttribute('tabindex', k === roving ? '0' : '-1');
+  const b = viewBtn(VIEWS[roving].id);
+  b?.focus();
+  return b;
+}
+VIEWS.forEach((v, i) => {
+  const b = viewBtn(v.id);
+  if (!b) return;
+  b.addEventListener('click', () => {
+    roving = i;
+    for (let k = 0; k < VIEWS.length; k++) viewBtn(VIEWS[k].id)?.setAttribute('tabindex', k === i ? '0' : '-1');
+    setAzimuth(FRONT_AZ + v.off);
+  });
+  b.addEventListener('keydown', (e) => {
+    let n = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = roving + 1;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = roving - 1;
+    else if (e.key === 'Home') n = 0;
+    else if (e.key === 'End') n = VIEWS.length - 1;
+    if (n === null) return;
+    e.preventDefault();
+    focusView(n)?.click();                        
+  });
+});
+
+renderer.domElement.setAttribute('tabindex', '0');
+function sayStage(words) {
+  const el = document.getElementById('stagesay');
+  if (!el || !words) return;
+  el.textContent = '';                        
+  setTimeout(() => { el.textContent = words; }, 30);
+}
+const dollyFactorNow = () => (subj.ready && subj.homeDist > 0
+  ? subj.homeDist / Math.max(1e-4, camera.position.distanceTo(controls.target)) : 1);
+function sayDolly() {
+  const f = dollyFactorNow();
+  sayStage(f <= 1.02 ? 'The framing — the whole suit.' : `Closer — ${f.toFixed(1)}× the framing.`);
+}
+function keyDolly(factor) {
+  if (!subj.ready) return;
+  const before = camera.position.distanceTo(controls.target);
+  dolly(factor);
+  const after = camera.position.distanceTo(controls.target);
+  if (Math.abs(after - before) < 0.01) {
+    sayStage(factor < 1 ? 'As close as this photograph goes.' : 'The whole suit is already in frame.');
+    return;
+  }
+  sayDolly();
+}
+renderer.domElement.addEventListener('keydown', (e) => {
+  if (e.altKey || e.ctrlKey || e.metaKey) return;     
+  if (e.key === 'ArrowRight') {
+    e.preventDefault(); yawBy(-YAW_STEP);
+    sayStage(`Turned right. ${canvasWhere()}`);
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault(); yawBy(YAW_STEP);
+    sayStage(`Turned left. ${canvasWhere()}`);
+  } else if (e.key === '+' || e.key === '=') {
+    e.preventDefault(); keyDolly(0.75);
+  } else if (e.key === '-' || e.key === '_') {
+    e.preventDefault(); keyDolly(1.34);
+  } else if (e.key === '0') {
+    e.preventDefault();
+    userAdjusted = false;
+    viewLocked = false;
+    closeInteriorCard();
+    frameSubject();
+    markCurrentView();
+    sayStage('Back to the framing — the whole suit.');
+  }
+});
+renderer.domElement.addEventListener('focus', () => { if (!COARSE) controls.enableZoom = true; });
+renderer.domElement.addEventListener('blur',  () => { if (!COARSE) controls.enableZoom = wheelZoom; });
+
+markCurrentView();
+
+function buildFormSet(mat) {
+  const g = new THREE.Group();
+  const add = (mesh, y) => { mesh.position.y = y; mesh.castShadow = true; mesh.receiveShadow = true; g.add(mesh); return mesh; };
+  add(new THREE.Mesh(formGeo, mat), 0);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(6.9, 6.9, 1.4, 48), walnut), 87.7);
+  add(new THREE.Mesh(new THREE.SphereGeometry(2.6, 32, 24), walnut), 91.6);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 3.4, 24), brass), 89.4);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 31, 32), brass), -15.5);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(4.4, 5.2, 2.2, 40), walnut), -29.4);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(15, 16.5, 1.6, 56), walnut), -30.6);
+  return g;
+}
+const mainSet = buildFormSet(cloth);
+scene.add(mainSet);
+const formSets = [mainSet];
+
+const TAG_FONT = '600 60px Inter, -apple-system, Helvetica, sans-serif';
+const TAG_H = 128, TAG_PAD = 36;
+let tagProbe = null;
+function tagWidth(text) {
+  if (!tagProbe) tagProbe = document.createElement('canvas').getContext('2d');
+  tagProbe.font = TAG_FONT;
+  return Math.max(200, Math.ceil(tagProbe.measureText(String(text || '')).width) + TAG_PAD * 2);
+}
+function tagPlate(text) {
+  const c = document.createElement('canvas');
+  c.height = TAG_H;
+  c.width = tagWidth(text);                         
+  const x = c.getContext('2d');
+  x.fillStyle = 'rgba(17,17,17,0.85)'; x.fillRect(0, 0, c.width, TAG_H);
+  x.fillStyle = '#fff'; x.font = TAG_FONT;
+  x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, c.width / 2, TAG_H / 2 + 2);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = ANISO;
+  return t;
+}
+function codeTag(text) {
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tagPlate(text), depthTest: false }));
+  sp.userData.aspect = tagWidth(text) / TAG_H;
+  sp.userData.said = String(text || '');
+  sp.renderOrder = 5;
+  return sp;
+}
+function retagPlate(sp, text) {
+  const said = String(text || '');
+  if (!sp || sp.userData.said === said) return;
+  sp.material.map?.dispose();
+  sp.material.map = tagPlate(said);
+  sp.material.needsUpdate = true;
+  sp.userData.aspect = tagWidth(said) / TAG_H;
+  sp.userData.said = said;
+}
+const tagCodeOnly = (s) => {
+  const t = String(s || ''), i = t.lastIndexOf(' · ');
+  return i < 0 ? t : t.slice(i + 3);
+};
+const TAG_MIN_PX = 34;                      
+const TAG_FLOOR_PX = 28;                    
+const TAG_GUTTER_PX = 12;                   
+const TAG_EDGE = 0.012;                     
+function sizeTags(viewportPx, cam) {
+  if (!heroTag && !compareTag) return;
+  const c = cam ?? camera;
+  if (!Number.isFinite(c.position.x + c.position.y + c.position.z)) return;
+  const h = Math.max(1, viewportPx ?? (renderer.domElement.clientHeight || paneH()));
+  const camAsp = Math.max(c.aspect, 0.01);
+  const stageW = Math.max(1, h * camAsp);
+  const tanH = 2 * Math.tan((c.fov * Math.PI) / 360);
+  c.updateMatrixWorld();                               
+
+  const tags = [heroTag, compareTag].filter(Boolean);
+  const pair = tags.length === 2;
+  const gutterN = (2 * TAG_GUTTER_PX) / stageW;
+  const laneHalf = (2 - gutterN - 2 * TAG_EDGE) / 4;
+
+  let wantPx = Math.max(TAG_MIN_PX, h * 0.05);
+  let mode = 'full';
+  if (pair) {
+    const widest = (key) => Math.max(...tags.map((t) => t.userData[key] ?? t.userData.aspect ?? 4));
+    const fits = (aspMax, px) => (px * aspMax) / stageW <= laneHalf;
+    const shrunk = (aspMax) =>
+      Math.max(TAG_FLOOR_PX, Math.min(wantPx, (laneHalf * stageW) / Math.max(aspMax, 0.01)));
+    const fullMax = widest('fullAspect');
+    if (fits(fullMax, wantPx)) {
+    } else if (fits(fullMax, shrunk(fullMax))) {
+      wantPx = shrunk(fullMax);                        
+    } else {
+      mode = 'code';                                   
+      const codeMax = widest('codeAspect');
+      wantPx = fits(codeMax, wantPx) ? wantPx : shrunk(codeMax);
+    }
+    for (const t of tags) {
+      retagPlate(t, mode === 'code' ? (t.userData.code ?? t.userData.said)
+                                    : (t.userData.full ?? t.userData.said));
+    }
+  }
+
+  let leftTag = null;
+  if (pair) {
+    const at = (t) => {
+      const v = new THREE.Vector3(t.userData.anchorX ?? 0, t.userData.topY ?? 0, 0).project(c);
+      return Number.isFinite(v.x) ? v.x : 0;
+    };
+    const a = at(tags[0]), b = at(tags[1]);
+    leftTag = a === b ? tags[0] : (a < b ? tags[0] : tags[1]);
+  }
+
+  for (const sp of tags) {
+    const asp = sp.userData.aspect ?? 4;
+    sp.position.set(sp.userData.anchorX ?? sp.position.x, sp.userData.topY ?? sp.position.y, 0);
+    const worldPerPx = (tanH * c.position.distanceTo(sp.position)) / h;
+    const hh = Math.max(2, wantPx * worldPerPx);
+    if (!Number.isFinite(hh)) continue;
+    sp.scale.set(hh * asp, hh, 1);
+    sp.position.y = (sp.userData.topY ?? sp.position.y) + hh * 0.75;
+    const halfH = wantPx / h, halfW = (wantPx * asp) / stageW;
+    const top = 1 - halfH - TAG_EDGE;
+    const p = sp.position.clone().project(c);
+    if (!Number.isFinite(p.x + p.y + p.z)) continue;
+    if (p.y > top) { sp.position.y = (sp.userData.topY ?? sp.position.y) - hh * 0.85; p.copy(sp.position).project(c); }
+    let lo = -1 + TAG_EDGE + halfW, hi = 1 - TAG_EDGE - halfW;
+    if (pair) {
+      if (sp === leftTag) hi = Math.min(hi, -gutterN / 2 - halfW);
+      else lo = Math.max(lo, gutterN / 2 + halfW);
+      if (lo > hi) { const m = sp === leftTag ? -gutterN / 2 - halfW : gutterN / 2 + halfW; lo = hi = m; }
+    }
+    const nx = THREE.MathUtils.clamp(p.x, lo, hi);
+    const ny = THREE.MathUtils.clamp(p.y, -1 + halfH + TAG_EDGE, top);
+    if (nx !== p.x || ny !== p.y) {
+      const back = new THREE.Vector3(nx, ny, p.z).unproject(c);
+      if (Number.isFinite(back.x + back.y + back.z)) sp.position.copy(back);
+    }
+  }
+}
+function dropTag(sp) { if (!sp) return; scene.remove(sp); sp.material.map?.dispose(); sp.material.dispose(); }
+
+let heroGLTF = null, secondSuit = null, compareForm = null;
+let heroTag = null, compareTag = null;
+
+function placeTags() {
+  dropTag(heroTag); dropTag(compareTag); heroTag = compareTag = null;
+  if (!cur.compare || THUMB) return;
+  const pairs = [[heroRoots[0] ?? mainSet, cur.code, 'hero'], [secondSuit ?? compareForm, cur.comparecode, 'cmp']];
+  for (const [obj, text, which] of pairs) {
+    if (!obj || !text) continue;
+    const b = new THREE.Box3().setFromObject(obj);
+    const sp = codeTag(text);
+    sp.userData.full = String(text);
+    sp.userData.code = tagCodeOnly(text);
+    sp.userData.fullAspect = sp.userData.aspect;
+    sp.userData.codeAspect = tagWidth(sp.userData.code) / TAG_H;
+    sp.userData.topY = b.max.y + 2;
+    sp.userData.anchorX = b.getCenter(new THREE.Vector3()).x;
+    sp.position.set(sp.userData.anchorX, sp.userData.topY, 0);
+    scene.add(sp);
+    if (which === 'hero') heroTag = sp; else compareTag = sp;
+  }
+  sizeTags();
+  dirty();
+}
+
+function setCompare(url, code2) {
+  cur.comparecode = code2 ?? null;
+  if (!url) {
+    if (secondSuit) { scene.remove(secondSuit); disposeSuit(secondSuit); secondSuit = null; }
+    if (compareForm) {
+      scene.remove(compareForm);
+      const i = formSets.indexOf(compareForm); if (i > 0) formSets.splice(i, 1);
+      const fm = suitInfo.get(compareForm)?.mat;
+      if (fm) { setMap(fm, 'map', null); setMap(fm, 'bumpMap', null); fm.dispose(); }
+      suitInfo.delete(compareForm);
+      compareForm = null;
+    }
+    cur.compare = null;
+    setOffset(heroRoots[0] ?? mainSet, 0);
+    placeTags(); paintCaption(); frameSubject(); shadowRefresh();
+    return;
+  }
+  cur.compare = url;
+  if (secondSuit) {
+    const m = suitMatOf(secondSuit);
+    m.userData.hex = cur.comparehex;                          
+    m.userData.hexBasis = cur.comparehexbasis; m.userData.pat = cur.comparepat; m.userData.hexStrict = true;
+    m.userData.photoUnusable = cur.comparephotounusable;
+    applyFabric(m, url, 'suit');                              
+  } else if (compareForm) {
+    const m = suitInfo.get(compareForm)?.mat ?? cloth;
+    m.userData.hex = cur.comparehex;
+    m.userData.hexBasis = cur.comparehexbasis; m.userData.pat = cur.comparepat;
+    applyFabric(m, url, 'form');
+  } else if (heroGLTF) {
+    const s = heroGLTF.scene.clone(true);
+    placeSuit({ scene: s }, fabricMaterial(url, {}, 'suit', cur.comparehex,
+      { hexBasis: cur.comparehexbasis, pat: cur.comparepat, hexStrict: true,
+        photoUnusable: cur.comparephotounusable }), 0, false);
+    secondSuit = s;
+  } else {
+    const mat = fabricMaterial(url, {}, 'form', cur.comparehex,
+      { hexBasis: cur.comparehexbasis, pat: cur.comparepat, hexStrict: true });
+    compareForm = buildFormSet(mat);
+    suitInfo.set(compareForm, { mat, homeX: 0, liningClones: [] });
+    scene.add(compareForm);
+    formSets.push(compareForm);
+    compareForm.visible = mainSet.visible;
+  }
+  const other = secondSuit ?? compareForm;
+  const w = subjectWidth();
+  setOffset(heroRoots[0] ?? mainSet, -(w * 0.67));             
+  if (other) setOffset(other, w * 0.67);
+  placeTags(); paintCaption(); frameSubject(); shadowRefresh();
+}
+
+let capNote = '';
+const SWATCH_LINE = {
+  measured:   'Photograph unavailable — shown in the cloth’s measured colour.',
+  unmeasured: 'Photograph unavailable, and this cloth’s colour is not measured — the form is shown in neutral grey.',
+  unusable:   'This cloth’s photograph shows no cloth, so the form is shown in neutral grey. The cloth itself is unaffected.',
+};
+let capStanding = '';
+function setSwatchMissing(state) {
+  const next = SWATCH_LINE[state] ?? '';
+  if (next === capStanding) return;
+  capStanding = next;
+  paintCaption();
+}
+function paintCaption() {
+  const cap = document.getElementById('cap');
+  if (!cap) return;
+  const kids = [];
+  if (cur.compare) {
+    kids.push(el('b', cur.code || '—'), txt(' · vs · '), el('b', cur.comparecode || '—'),
+              row('mut', el('span', 'Same light, same form — the tag above each suit names its cloth.', 'book')));
+  } else if (cur.cloth) {
+    const lead = cur.plain || cur.code || 'Your cloth';
+    const meta = [cur.book, cur.weight].filter(Boolean).join(' · ');
+    kids.push(el('b', lead), el('span', ' — on the form', 'tail'));
+    const bits = [];
+    if (cur.code && cur.code !== lead) bits.push(el('span', cur.code, 'code'));
+    if (meta) bits.push(el('span', meta, 'book'));
+    if (bits.length) kids.push(row('mut', ...bits));
+  } else {
+    kids.push(el('b', 'Your suit, on the form'),
+              row('mut', el('span', 'Choose a cloth and it drapes here.', 'book')));
+  }
+  if (capStanding) kids.push(el('span', capStanding, 'standing'));
+  if (capNote) kids.push(el('span', capNote, 'mut note'));
+  cap.replaceChildren(...kids);                  
+}
+function paintLiningChip() {
+  const chip = document.getElementById('liningChip');
+  if (!chip) return;
+  if (!cur.lining) { chip.classList.remove('on'); return; }
+  chip.classList.add('on');
+  chip.querySelector('span').textContent = cur.liningCode ? `LINING · ${cur.liningCode}` : 'LINING CHOSEN';
+  const cv = chip.querySelector('canvas');
+  const cx = cv.getContext('2d');
+  cx.clearRect(0, 0, cv.width, cv.height);
+  const hit = cropCache.get(cur.lining);
+  if (hit) cx.drawImage(hit.canvas, 0, 0, cv.width, cv.height);
+  const card = document.getElementById('labelCard');
+  if (card.classList.contains('open') && card.classList.contains('lining') && hit) {
+    document.getElementById('labelPanel').style.backgroundImage = `url("${hit.canvas.toDataURL('image/png')}")`;
+  }
+}
+
+const HINT_KEY = 'pt.hint.dragToTurn';
+let hintLive = false;
+function readFlag(k) { try { return localStorage.getItem(k); } catch { return '1'; } }
+function writeFlag(k, v) { try { localStorage.setItem(k, v); } catch {   } }
+function dismissHint() {
+  if (!hintLive) return;
+  hintLive = false;
+  writeFlag(HINT_KEY, '1');
+  const h = document.getElementById('hint');
+  if (!h) return;
+  h.classList.add('going');
+  setTimeout(() => { h.hidden = true; h.classList.remove('going'); }, 160);
+}
+function armHint() {
+  const h = document.getElementById('hint');
+  if (!h || THUMB || readFlag(HINT_KEY) === '1') return;
+  hintLive = true;
+  h.hidden = false;
+  h.addEventListener('click', dismissHint);
+}
+
+const labelState = { cv: null };
+function buildLabelCanvas() {
+  if (!labelState.cv) { labelState.cv = document.createElement('canvas'); labelState.cv.width = 512; labelState.cv.height = 224; }
+  const cx = labelState.cv.getContext('2d');
+  cx.fillStyle = '#F2F2F2'; cx.fillRect(0, 0, 512, 224);
+  cx.strokeStyle = '#6E1F2E'; cx.lineWidth = 6; cx.strokeRect(14, 14, 484, 196);
+  cx.textAlign = 'center';
+  cx.fillStyle = '#6E1F2E'; cx.font = '600 26px Inter, Helvetica, Arial, sans-serif';
+  cx.fillText('B E S P O K E   B Y   P A U L', 256, 72);
+  cx.fillStyle = '#1D1D1D'; cx.font = '44px "Source Serif 4", Georgia, serif';    
+  cx.fillText(cur.liningCode || 'Your lining', 256, 136);
+  cx.fillStyle = '#6A6A6A'; cx.font = '600 20px Inter, Helvetica, Arial, sans-serif';
+  cx.fillText('M A D E   T O   P A U L ’ S   R E C O R D', 256, 186);
+  return labelState.cv;
+}
+function openInteriorCard(mode) {
+  const card = document.getElementById('labelCard');
+  const img = document.getElementById('labelImg');
+  const lining = mode === 'lining';
+  card.classList.toggle('lining', lining);
+  if (lining) {
+    img.removeAttribute('src');
+    img.alt = '';
+  } else {
+    img.src = buildLabelCanvas().toDataURL('image/png');
+    img.alt = 'the label sewn inside your jacket';
+  }
+  document.getElementById('labelCap').textContent = lining
+    ? (cur.liningCode ? `Your lining, ${cur.liningCode} — sewn inside your jacket.`
+                      : 'Your lining, sewn inside your jacket.')
+    : (cur.liningCode ? `Sewn inside your jacket, on ${cur.liningCode}.`
+                      : 'Sewn inside your jacket, on your chosen lining.');
+  const panel = document.getElementById('labelPanel');
+  const crop = cur.lining ? cropCache.get(cur.lining) : null;
+  panel.style.backgroundImage = crop ? `url("${crop.canvas.toDataURL('image/png')}")`
+    : cur.lining ? `url("${cur.lining.replace(/["\\)]/g, encodeURIComponent)}")` : 'none';
+  card.classList.add('open');
+  try { parent.postMessage({ ptInterior: mode }, '*'); } catch {   }
+}
+function closeInteriorCard() {
+  const card = document.getElementById('labelCard');
+  if (!card.classList.contains('open')) return;
+  card.classList.remove('open');
+  try { parent.postMessage({ ptInterior: null }, '*'); } catch {   }
+}
+
+const VIEW_PRESETS = {
+  full:    null,                                    
+  lapel:   { t: [1.7, 51, 9],    c: [6, 53, 34] },  
+  buttons: { t: [1.7, 51, 9],    c: [6, 53, 34] },
+  cuff:    { t: [22.6, 36.6, 7.6], c: [33, 41, 33] },
+  lining:  { t: [0, 61, 3],      c: [7, 64, 39] },  
+};
+
+function setView(name) {
+  if (name === 'label') { openInteriorCard('label'); return; }
+  const p = VIEW_PRESETS[name];
+  if (!p) { viewLocked = false; closeInteriorCard(); frameSubject(); return; }
+  viewLocked = true;
+  const h = heroRoots[0];
+  const dx = h ? h.position.x - (suitInfo.get(h)?.homeX ?? 0) : 0;
+  controls.target.set(p.t[0] + dx, p.t[1], p.t[2]);
+  camera.position.set(p.c[0] + dx, p.c[1], p.c[2]);
+  controls.minDistance = Math.min(controls.minDistance, camera.position.distanceTo(controls.target) * 0.9);
+  controls.update();
+  dirty();
+  if (name === 'lining') {
+    capNote = cur.liningCode ? `Your lining — ${cur.liningCode} — inside the jacket.` : 'Your lining, inside the jacket.';
+    paintCaption();
+    setTimeout(() => { capNote = ''; paintCaption(); }, 6000);
+    if (cur.lining) openInteriorCard('lining'); else closeInteriorCard();
+  } else {
+    closeInteriorCard();
+  }
+}
+if (DEBUG) window.PT_VIEW = (t, c, free) => {
+  viewLocked = true;
+  if (free) { controls.minPolarAngle = 0.01; controls.maxPolarAngle = Math.PI - 0.01; controls.minDistance = 0.2; }
+  controls.target.set(t[0], t[1], t[2]);
+  camera.position.set(c[0], c[1], c[2]);
+  controls.minDistance = Math.min(controls.minDistance, camera.position.distanceTo(controls.target) * 0.9);
+  controls.update();
+  drawFrame();
+  return { t: controls.target.toArray().map((v) => +v.toFixed(2)),
+           c: camera.position.toArray().map((v) => +v.toFixed(2)),
+           dist: +camera.position.distanceTo(controls.target).toFixed(2) };
+};
+
+let cardCanvas = null;
+const cardCam = new THREE.PerspectiveCamera(34, 1, 1, 800);
+function paintSuitInto(x, dx, dy, CW, CH) {
+  const box = subjectBox();
+  cardCam.aspect = CW / CH;
+  if (box) {
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const tan = 2 * Math.tan((cardCam.fov * Math.PI) / 360);
+    const dist = Math.max((size.y * 1.02) / tan, (size.x * 1.12) / tan / cardCam.aspect, 40);
+    const dir = camera.position.clone().sub(controls.target);
+    if (dir.lengthSq() < 1e-6) dir.set(0.16, 0.06, 1);
+    cardCam.position.copy(center).addScaledVector(dir.normalize(), dist);
+    cardCam.lookAt(center);
+  } else {
+    cardCam.position.copy(camera.position); cardCam.quaternion.copy(camera.quaternion);
+  }
+  cardCam.updateProjectionMatrix();
+  renderer.setPixelRatio(1);
+  renderer.setSize(CW, CH, false);             
+  sizeTags(CH, cardCam);                       
+  const liveGround = scene.background.getHex();
+  scene.background.set(new THREE.Color(cssVar('--room-night') || '#3D3D3D'));
+  renderer.render(scene, cardCam);
+  x.drawImage(renderer.domElement, dx, dy, CW, CH);    
+  scene.background.setHex(liveGround);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(paneW(), paneH());
+  sizeTags();
+  renderer.render(scene, camera);              
+}
+function buildCard() {
+  const W = 1080, H = 1350, CW = 1080, CH = 1080;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  const ink = cssVar('--room-ink') || '#FFFFFF';    
+  x.fillStyle = cssVar('--room-night') || '#3D3D3D';    
+  x.fillRect(0, 0, W, H);
+  paintSuitInto(x, (W - CW) / 2, 76, CW, CH);                
+  x.fillStyle = ink;
+  x.textAlign = 'center';
+  x.font = '30px "Source Serif 4", ui-serif, Georgia, serif';
+  x.fillText('B E S P O K E   B Y   P A U L', W / 2, 56);
+  const hit = cur.cloth ? cropCache.get(cur.cloth) : null;
+  if (hit) x.drawImage(hit.canvas, W / 2 - 30, 1166, 60, 60);
+  x.fillStyle = ink;
+  x.font = '500 34px Inter, -apple-system, Helvetica, Arial, sans-serif';
+  x.fillText(cardTitle(), W / 2, 1266);                      
+  x.font = '400 22px Inter, -apple-system, Helvetica, Arial, sans-serif';
+  x.fillStyle = ink;
+  x.fillText('Made to Paul’s record.', W / 2, 1300);         
+  x.font = '400 20px Inter, -apple-system, Helvetica, Arial, sans-serif';
+  x.fillText('A standard form in your cloth — your garment is cut to your own record.',
+             W / 2, 1332);
+  cardCanvas = c;
+  return c.toDataURL('image/jpeg', 0.92);                    
+}
+function cardTitle() {
+  if (cur.compare) return [cur.code, cur.comparecode].filter(Boolean).join('  vs  ') || 'Your suit';
+  return cur.plain || cur.code || 'Your suit';
+}
+function cardFontsWarm() {
+  if (!document.fonts || !document.fonts.load) return;
+  document.fonts.load('30px "Source Serif 4"').catch(() => {});
+  document.fonts.load('44px "Source Serif 4"').catch(() => {});
+  document.fonts.load('500 34px Inter').catch(() => {});
+  document.fonts.load('600 60px Inter').catch(() => {});
+}
+cardFontsWarm();
+const cardCopy = document.getElementById('cardCopy');
+const cardShare = document.getElementById('cardShare');
+const resetCardButtons = () => { cardCopy.textContent = 'Copy image'; cardShare.textContent = 'Share'; };
+function tellCard(on) {
+  try { parent.postMessage({ ptCard: on ? 1 : 0 }, '*'); } catch {   }
+}
+function openCard() {
+  const shot = buildCard();                                   
+  const card = document.getElementById('card');
+  card.querySelector('img').src = shot;
+  card.querySelector('.spec').textContent = cardTitle();
+  resetCardButtons();
+  card.classList.add('open');
+  tellCard(true);
+  return shot;                                                
+}
+function closeCard() {
+  const card = document.getElementById('card');
+  if (!card.classList.contains('open')) return;
+  card.classList.remove('open');
+  tellCard(false);
+}
+window.PT_SNAP = openCard;
+document.getElementById('cardClose').addEventListener('click', closeCard);
+document.getElementById('card').addEventListener('click', (e) => { if (e.target.id === 'card') closeCard(); });
+function exitInteriorCard() {
+  const lining = document.getElementById('labelCard').classList.contains('lining');
+  closeInteriorCard();
+  if (lining) { viewLocked = false; frameSubject(); }
+}
+document.getElementById('labelClose').addEventListener('click', () => exitInteriorCard());
+document.getElementById('labelCard').addEventListener('click', (e) => {
+  if (e.target.closest('button')) return;
+  exitInteriorCard();
+});
+addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  closeCard();
+  exitInteriorCard();
+});
+cardCopy.addEventListener('click', async () => {
+  try {
+    const blob = await new Promise((res, rej) => cardCanvas
+      ? cardCanvas.toBlob((b) => (b ? res(b) : rej(new Error('no blob'))), 'image/png')
+      : rej(new Error('no card')));
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    cardCopy.textContent = 'Copied ✓';
+  } catch { cardCopy.textContent = 'Long-press the image'; }
+  setTimeout(resetCardButtons, 2000);
+});
+cardShare.addEventListener('click', async () => {
+  try {
+    const blob = await (await fetch(document.querySelector('#card img').src)).blob();
+    const file = new File([blob], 'bespoke-by-paul-look.jpg', { type: 'image/jpeg' });
+    if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: 'My Bespoke by Paul suit' });
+    else {
+      await navigator.clipboard.writeText(document.referrer || location.href);
+      cardShare.textContent = 'Link copied ✓';
+      setTimeout(resetCardButtons, 2000);
+    }
+  } catch {   }
+});
+
+const gltf = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+const HERO_URLS = [
+  ...(DEBUG && q.get('hero') ? [q.get('hero')] : []),
+  'assets/suit/Mens_Suit_2.slim.glb',       
+  'assets/suit/Mens_Suit_2.slim.gltf',      
+  'assets/suit/Mens_Suit_2.gltf',           
+  ...(q.get('rig') === '1' ? ['assets/test-suit/quaternius-suit.glb'] : []),
+];
+
+function exportThumb() {
+  const t0 = performance.now();
+  (function poll() {
+    if (window.PT_OK() || texFailed || performance.now() - t0 > 5000) {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        renderer.render(scene, camera);
+        try { parent.postMessage({ ptThumb: cur.code, data: renderer.domElement.toDataURL('image/jpeg', 0.85) }, '*'); }
+        catch (e) { console.error('[thumb]', e); }
+      }));
+    } else setTimeout(poll, 120);
+  })();
+}
+
+function onProgress(e) {
+  const bar = document.querySelector('#loadline .bar i');
+  if (!bar || !e?.lengthComputable || !e.total) return;
+  document.getElementById('loadline')?.classList.add('det');
+  bar.style.width = Math.max(4, Math.round((e.loaded / e.total) * 100)) + '%';
+}
+
+async function loadHero(list) {
+  for (const url of list) {
+    let g = null;
+    try { g = await new Promise((res, rej) => gltf.load(url, res, onProgress, rej)); }
+    catch (err) { log('[hero] not available', url, err?.message ?? err); continue; }
+    await loadMaskFor(url);
+    heroGLTF = g;
+    placeSuit(g, cloth, 0, true);
+    log('[hero]', url);
+    if (cur.compare && !THUMB) setCompare(cur.compare, cur.comparecode);
+    if (THUMB) { frameSubject(1.04); exportThumb(); }
+    (function readyPoll() {
+      if (window.PT_OK() || texFailed || !imgParamPresent) { window.PT_READY = true; reveal(); }
+      else setTimeout(readyPoll, 150);
+    })();
+    return;
+  }
+  console.warn('[hero] no suit model loaded — showing the dress form');
+  window.PT_READY = true;
+  window.PT_STATE.degraded = true;
+  capNote = 'The tailored form is loading slowly — the cloth shown is correct.';
+  if (cur.compare) setCompare(cur.compare, cur.comparecode);
+  frameSubject();
+  paintCaption();
+  reveal();
+}
+
+function reveal() {
+  document.body.classList.add('ready');
+  armHint();                      
+  paintViewName();                
+  shadowRefresh();
+  window.PT3D_READY?.();
+}
+
+addEventListener('message', (ev) => {
+  if (ev.source !== parent) return;                   
+  const d = ev.data;
+  if (!d || d.ptSet !== 1) return;
+  if ('cloth' in d || 'compare' in d) {
+    SWAP_LOG.length = 0;
+    try { performance.clearMarks(); performance.clearMeasures(); } catch {   }
+    swapT0 = performance.now();
+    stage('message');
+  }
+
+  let caption = false;
+  if ('photoUnusable' in d) {
+    cloth.userData.photoUnusable = cur.photounusable = !!d.photoUnusable;
+    if (isCoveredSilk(cur.buttons)) repaintButtons();
+  }
+  if ('shirtphotoUnusable' in d) shirtMat.userData.photoUnusable = cur.shirtphotounusable = !!d.shirtphotoUnusable;
+  if ('comparephotoUnusable' in d) cur.comparephotounusable = !!d.comparephotoUnusable;
+  if ('hexBasis' in d) cloth.userData.hexBasis = cur.hexbasis = d.hexBasis ?? null;
+  if ('pat' in d) cloth.userData.pat = cur.pat = d.pat ?? null;
+  if ('comparehexbasis' in d) cur.comparehexbasis = d.comparehexbasis ?? null;
+  if ('comparepat' in d) cur.comparepat = d.comparepat ?? null;
+  if ('hex' in d) {
+    cloth.userData.hex = cur.hex = d.hex ?? null;
+    if (!window.PT_OK() && cloth.userData.clothUrl) {
+      const known = hexTrust(cloth.userData);
+      const fb = known ?? NO_COLOUR;
+      cloth.color?.setHex(fb);
+      for (const e of lateFabric) if (e.src === cloth) e.m.color?.setHex(fb);
+      setSwatchMissing(known !== null ? 'measured' : 'unmeasured');
+    }
+    if (isCoveredSilk(cur.buttons)) repaintButtons();
+  }
+  if ('shirthex' in d) shirtMat.userData.hex = cur.shirthex = d.shirthex ?? null;
+  if ('bandTop' in d || 'bandBottom' in d) {
+    const n = (v, f) => Math.max(0, Math.min(240, Number(v ?? f) || 0));
+    cur.bandTop = n(d.bandTop, cur.bandTop); cur.bandBottom = n(d.bandBottom, cur.bandBottom);
+    applyReserve(); sizeToPane();
+  }
+  if ('lininghex' in d) liningMat.userData.hex = cur.lininghex = d.lininghex ?? null;
+  if ('comparehex' in d) {
+    cur.comparehex = d.comparehex ?? null;
+    const cm = secondSuit ? suitMatOf(secondSuit) : (compareForm ? suitInfo.get(compareForm)?.mat : null);
+    if (cm) { cm.userData.hex = cur.comparehex; cm.userData.hexBasis = cur.comparehexbasis; cm.userData.pat = cur.comparepat; }
+  }
+  if ('pat' in d || 'repeatCm' in d || 'repeat' in d || 'shirtpat' in d || 'liningpat' in d ||
+      'comparepat' in d || 'comparerepeatCm' in d || 'cloth' in d || 'compare' in d ||
+      'shirt' in d || 'lining' in d) {
+    if ('repeatCm' in d || 'repeat' in d) cur.repeatcm = Number(d.repeatCm ?? d.repeat) || null;
+    if ('comparerepeatCm' in d) cur.comparerepeatcm = Number(d.comparerepeatCm) || null;
+    if ('shirtpat' in d) cur.shirtpat = d.shirtpat ?? null;
+    if ('liningpat' in d) cur.liningpat = d.liningpat ?? null;
+    for (const [k, url] of [['cloth', d.cloth], ['compare', d.compare], ['shirt', d.shirt], ['lining', d.lining]]) {
+      if (!(k in d) || !url) continue;
+      const pat = k === 'cloth' ? (('pat' in d) ? d.pat : cur.pat)
+                : k === 'compare' ? (('comparepat' in d) ? d.comparepat : cur.comparepat)
+                : k === 'shirt' ? cur.shirtpat : cur.liningpat;
+      const cm = k === 'cloth' ? cur.repeatcm : k === 'compare' ? cur.comparerepeatcm : null;
+      noteCloth(url, pat, cm);
+    }
+    noteAll();
+  }
+  if ('cloth' in d) {
+    const v = d.cloth ?? null;
+    if (v !== cur.cloth) {
+      cur.cloth = v; caption = true;
+      timed('applyFabric', () => (v ? applyFabric(cloth, v, 'form') : clearFabric(cloth)));
+    }
+  }
+  if ('shirt' in d) {
+    const v = d.shirt ?? null;
+    if (v !== cur.shirt) { cur.shirt = v; v ? applyFabric(shirtMat, v, 'shirt') : clearFabric(shirtMat, 0xf4f1ea); }
+  }
+  if ('liningCode' in d) { const v = d.liningCode ?? null; if (v !== cur.liningCode) { cur.liningCode = v; paintLiningChip(); } }
+  if ('lining' in d) { const v = d.lining ?? null; if (v !== cur.lining) setLining(v); }
+  if ('shoes'   in d && d.shoes   !== cur.shoes)   setShoes(d.shoes);
+  if ('buttons' in d && d.buttons !== cur.buttons) setButtons(d.buttons);
+  if ('scene'   in d && d.scene   !== cur.scene && (d.scene === 'studio' || d.scene === 'evening')) applyScene(d.scene);
+  if ('ground'    in d) setGround(d.ground);
+  if ('frame'     in d) setFrame(d.frame);
+  if ('wheelzoom' in d) setWheelZoom(d.wheelzoom);
+  if ('vest'    in d && !!d.vest  !== cur.vest)    setVest(d.vest);
+  let retag = false;
+  if ('code' in d)   { if (d.code   !== cur.code)   { cur.code = d.code ?? '';     caption = true; retag = true; } }
+  if ('plain' in d)  { if (d.plain  !== cur.plain)  { cur.plain = d.plain ?? '';   caption = true; } }
+  if ('book' in d)   { if (d.book   !== cur.book)   { cur.book = d.book ?? '';     caption = true; } }
+  if ('weight' in d) { if (d.weight !== cur.weight) { cur.weight = d.weight ?? ''; caption = true; } }
+  if ('comparecode' in d) { const v = d.comparecode ?? null; if (v !== cur.comparecode) { cur.comparecode = v; retag = true; caption = true; } }
+  if ('compare' in d) {
+    const v = d.compare ?? null;
+    if (v !== cur.compare) { setCompare(v, cur.comparecode); caption = false; retag = false; }
+  }
+  if (retag) timed('tags', () => placeTags());     
+  if ('price' in d) cur.price = d.price ?? '';        
+  if (caption) timed('caption', () => paintCaption());
+  if ('view' in d) setView(d.view);
+  if (d.snap) openCard();
+  stage('handled');
+  dirty();
+});
+
+let lastW = -1, lastH = -1;                
+function sizeToPane() {
+  const w = paneW(), h = paneH();
+  if (w === lastW && h === lastH) return;
+  lastW = w; lastH = h;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  if (!subj.ready) frameSubject();
+  else if (wheelZoom && !userAdjusted && !viewLocked) frameSubject();
+  dirty();
+}
+addEventListener('resize', () => { sizeToPane(); dirty(); });
+new ResizeObserver(() => { sizeToPane(); dirty(); }).observe(stageEl);
+
+const lastPose = { pos: new THREE.Vector3(), tgt: new THREE.Vector3(), ok: false };
+const poseFinite = () => Number.isFinite(camera.position.x + camera.position.y + camera.position.z) &&
+                         Number.isFinite(controls.target.x + controls.target.y + controls.target.z) &&
+                         Number.isFinite(camera.aspect) && camera.aspect > 0;
+function drawFrame() {
+  const nowMs = performance.now();
+  stepTweens(nowMs);                
+  sizeToPane();
+  const moved = controls.update();             
+  if (poseFinite()) { lastPose.pos.copy(camera.position); lastPose.tgt.copy(controls.target); lastPose.ok = true; }
+  else {
+    console.error('[view] non-finite camera — restoring the last good framing');
+    camera.aspect = paneW() / paneH();
+    camera.updateProjectionMatrix();
+    if (lastPose.ok) { camera.position.copy(lastPose.pos); controls.target.copy(lastPose.tgt); }
+    else { camera.position.set(34, 52, 225); controls.target.set(0, 36, 0); }
+    controls.update();
+    if (!poseFinite()) frameSubject();
+  }
+  sizeTags();
+  placeEdge();                      
+  const renderAt = performance.now();
+  renderer.render(scene, camera);
+  RENDER.draws += renderer.info.render.calls;
+  RENDER.lastRenderAt = performance.now();
+  if (swapT0 && RENDER.lastRenderAt - swapT0 < 3000) {
+    stage('render', RENDER.lastRenderAt - renderAt);
+    stage('frame', RENDER.lastRenderAt - nowMs);
+  }
+  return moved;
+}
+
+const COAST_MS = 700;                     
+const SETTLED = 1e-2;                     
+let lastInputAt = -Infinity;
+const seen = { pos: new THREE.Vector3(), tgt: new THREE.Vector3(), has: false };
+function stillMoving() {
+  const dp = seen.has ? seen.pos.distanceTo(camera.position) : Infinity;
+  const dt = seen.has ? seen.tgt.distanceTo(controls.target) : Infinity;
+  seen.pos.copy(camera.position); seen.tgt.copy(controls.target); seen.has = true;
+  if (!Number.isFinite(dp) || !Number.isFinite(dt)) return true;
+  if (dp <= SETTLED && dt <= SETTLED) return false;
+  return performance.now() - lastInputAt < COAST_MS;
+}
+let inFrame = false;
+function onFrame() {
+  rafId = 0;
+  if (RENDER.parked) return;
+  inFrame = true;
+  let more = false;
+  try {
+    const moved = drawFrame();
+    more = moved && stillMoving();
+    if (moved && !more) {
+      let n = 0; while (controls.update() && ++n < 240);
+      drawFrame();
+    }
+  } finally { inFrame = false; }
+  if (!more) stillMoving();                         
+  if (more || tweenActive()) dirty();
+}
+controls.addEventListener('change', () => { markCurrentView(); if (!inFrame) dirty(); });
+
+function repark() {
+  const next = document.hidden || !RENDER.onScreen;
+  if (next === RENDER.parked) return;
+  RENDER.parked = next;
+  if (next) { cancelAnimationFrame(rafId); rafId = 0; }
+  else dirty();                                   
+}
+if (!THUMB) {
+  new IntersectionObserver(([e]) => { RENDER.onScreen = e.isIntersecting; repark(); }, { threshold: 0 })
+    .observe(renderer.domElement);
+  document.addEventListener('visibilitychange', repark);
+}
+dirty();                                          
+
+window.PT_RENDER = () => { drawFrame(); };
+window.PT_OK = () => !!cloth.map && cloth.map !== BLANK && !cloth.map.userData?.flat;
+window.PT_ZOOM = () => {
+  const d = camera.position.distanceTo(controls.target);
+  const tf = textureFloor();
+  const hit = cur.cloth ? cropCache.get(cur.cloth) : null;
+  const texels = hit && hit.side ? (hit.side * CM_PER_UNIT) / Math.max(0.4, tileCmFor(cur.cloth)) : 0;
+  const H = renderer.domElement.height || 1;
+  return {
+    floor: +controls.minDistance.toFixed(2),
+    ceiling: +controls.maxDistance.toFixed(2),
+    texture: +tf.toFixed(2),
+    here: +d.toFixed(2),
+    texelsPerUnit: +texels.toFixed(2),
+    px: texels ? +((controls.minDistance * tanFov() * texels) / H).toFixed(3) : null,
+    pan: controls.enablePan,
+    twoFinger: controls.touches.TWO === THREE.TOUCH.DOLLY_ROTATE ? 'DOLLY_ROTATE' : 'other',
+    wheelZoom,
+  };
+};
+window.PT_STATS = () => ({
+  fit: (() => {
+    if (!subj.ready) return null;
+    const h = renderer.domElement.clientHeight || paneH() || 1;
+    const at = (y) => { const v = new THREE.Vector3(0, y, 0).project(camera);
+                        return +(((-v.y * 0.5) + 0.5) * h).toFixed(1); };
+    const top = at(subj.top), bottom = at(subj.bottom);
+    return { paneH: h, top, bottom, airTop: +top.toFixed(1),
+             airBottom: +(h - bottom).toFixed(1) };
+  })(),
+  frame: renderer.info.render.frame,
+  frames: renderer.info.render.frame,
+  draws: RENDER.draws,
+  textures: renderer.info.memory.textures,
+  lastRenderAt: RENDER.lastRenderAt,
+  parked: RENDER.parked,
+  pending: !!rafId,
+  geometries: renderer.info.memory.geometries,
+  programs: renderer.info.programs?.length ?? 0,
+  pool: texPool.size,
+  crops: { ...PT_CROPS },
+  scale: (() => {
+    const url = cur.cloth; if (!url) return null;
+    const c = cropCache.get(url);
+    const out = { tileCm: +tileCmFor(url).toFixed(2), periodPx: c?.periodPx ?? null, periodCorr: c?.periodCorr ?? 0,
+                  pat: PATTERN_OF.get(url) ?? null, repeatCm: REPEAT_CM.get(url) ?? null, repeat: {}, cmPerTile: {} };
+    for (const k of ['suit', 'trouser', 'vest', 'shirt']) {
+      const r = repeatFor(k, url);
+      out.repeat[k] = +r.toFixed(2);
+      out.cmPerTile[k] = +(CM_PER_UNIT / (r * (GARMENT_DENSITY[k] ?? GARMENT_DENSITY.suit))).toFixed(2);
+    }
+    return out;
+  })(),
+  density: { ...GARMENT_DENSITY },
+  pose: { pos: camera.position.toArray().map((v) => +v.toFixed(3)),
+          target: controls.target.toArray().map((v) => +v.toFixed(3)),
+          aspect: +camera.aspect.toFixed(4) },
+  tweens: tweens.size,
+  mix: (() => { let m = 0; for (const tw of tweens) for (const mat of tw.mats.keys()) m = Math.max(m, mat.userData.mix.factor.value); return m; })(),
+});
+
+function jacketNDCBox() {
+  const box = new THREE.Box3();
+  const root = heroRoots[0];
+  if (root) root.traverse((o) => {
+    if (o.isMesh && o.visible && /jacket/i.test(o.name) && !BUTTONISH.test(`${o.name}/`)) box.expandByObject(o);
+  });
+  if (box.isEmpty()) { const s = formSets.find((f) => f.visible); if (s) box.expandByObject(s); }
+  if (box.isEmpty() || !Number.isFinite(box.min.y + box.max.y)) return null;
+  camera.updateMatrixWorld();
+  const v = new THREE.Vector3();
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (let i = 0; i < 8; i++) {
+    v.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(camera);
+    if (!Number.isFinite(v.x + v.y)) return null;
+    x0 = Math.min(x0, v.x); y0 = Math.min(y0, v.y); x1 = Math.max(x1, v.x); y1 = Math.max(y1, v.y);
+  }
+  return { x0, y0, x1, y1 };
+}
+if (DEBUG) window.PT_YAW = (deg) => {
+  const r = (deg * Math.PI) / 180, d = 260;
+  controls.target.set(0, 28, 0);
+  camera.position.set(Math.sin(r) * d, 28 + 10, Math.cos(r) * d);
+  viewLocked = true;                        
+  controls.update();
+  drawFrame();
+  return { yaw: deg, pos: camera.position.toArray().map((v) => +v.toFixed(2)) };
+};
+window.PT_SAMPLE = () => {
+  window.PT_RENDER();
+  const nb = jacketNDCBox();
+  if (!nb) return null;
+  const gl = renderer.getContext();
+  const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+  const W = Math.max(1, Math.round(size.x)), H = Math.max(1, Math.round(size.y));
+  const cx = (nb.x0 + nb.x1) / 2, wN = nb.x1 - nb.x0, hN = nb.y1 - nb.y0;
+  const px = (n, D) => Math.round(((n + 1) / 2) * D);
+  const rx0 = Math.max(0, Math.min(W - 2, px(cx - wN * 0.17, W)));
+  const rx1 = Math.max(rx0 + 1, Math.min(W - 1, px(cx + wN * 0.17, W)));
+  const ry0 = Math.max(0, Math.min(H - 2, px(nb.y1 - hN * 0.60, H)));
+  const ry1 = Math.max(ry0 + 1, Math.min(H - 1, px(nb.y1 - hN * 0.30, H)));
+  const bw = rx1 - rx0, bh = ry1 - ry0;
+  const buf = new Uint8Array(bw * bh * 4);
+  gl.readPixels(rx0, ry0, bw, bh, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  const bg = new Uint8Array(4);
+  gl.readPixels(1, H - 2, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, bg);
+  let r = 0, g = 0, b = 0, n = 0;
+  for (let i = 0; i < buf.length; i += 4) {
+    if (buf[i + 3] < 8) continue;
+    if (Math.abs(buf[i] - bg[0]) + Math.abs(buf[i + 1] - bg[1]) + Math.abs(buf[i + 2] - bg[2]) < 12) continue;
+    r += buf[i]; g += buf[i + 1]; b += buf[i + 2]; n++;
+  }
+  if (!n) return null;
+  const out = [Math.round(r / n), Math.round(g / n), Math.round(b / n)];
+  return { r: out[0], g: out[1], b: out[2], n, total: bw * bh,
+           hex: '#' + out.map((c) => c.toString(16).padStart(2, '0')).join(''),
+           rect: [rx0, ry0, bw, bh] };
+};
+
+setTimeout(() => {
+  if (window.PT_READY) return;
+  window.PT_READY = true;
+  window.PT_STATE.degraded = true;
+  if (!heroRoots.length) frameSubject();
+  capNote = 'Still drawing the cloth — the colour and code above are correct.';
+  paintCaption();
+  reveal();
+}, 25000);
+
+applyScene(cur.scene);
+setButtons(cur.buttons);
+setShoes(cur.shoes);
+paintLining();
+paintCaption();
+paintLiningChip();
+loadHero(HERO_URLS);
+
+addEventListener('wheel', (e) => {
+  if (wheelZoom) return;
+  if (document.activeElement === renderer.domElement) return;    
+  e.stopPropagation();                                           
+}, { capture: true, passive: true });
+
+
+</script>
+</body>
+</html>

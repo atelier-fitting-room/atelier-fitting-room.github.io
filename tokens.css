@@ -1,0 +1,458 @@
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url("fonts/source-serif-4-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url("fonts/inter-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: optional;
+  src: url("fonts/inter-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: optional;
+  src: url("fonts/inter-600.woff2") format("woff2");
+}
+
+@layer tokens {
+  :root {
+    color-scheme: light;
+    font-synthesis: none;
+    font-variant-numeric: tabular-nums lining-nums;
+
+    --font-family-serif-stack: "Source Serif 4", Charter, "Iowan Old Style", Georgia, "Times New Roman", serif;
+    --font-family-sans-stack: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --type-size-100: 12px;
+    --type-size-200: 14px;
+    --type-size-300: 16px;
+    --type-size-400: 20px;
+    --type-size-500: 28px;
+    --type-size-600: 40px;
+    --type-line-height-100: 17px;
+    --type-line-height-200: 21px;
+    --type-line-height-300: 26px;
+    --type-line-height-400: 28px;
+    --type-line-height-500: 35px;
+    --type-line-height-600: 44px;
+    --type-weight-regular: 400;
+    --type-weight-medium: 500;
+    --type-weight-semibold: 600;
+    --type-tracking-display: -0.03em;
+    --type-tracking-tight: -0.02em;
+    --type-tracking-normal: 0em;
+    --type-tracking-wide: 0.02em;
+    --type-tracking-caps: 0.1em;
+    --type-figures-default: tabular-nums lining-nums;
+    --type-figures-identifier: tabular-nums lining-nums slashed-zero;
+    --type-underline-color: var(--color-line-rule);
+    --type-underline-color-hover: var(--color-ink-primary);
+    --type-underline-thickness: var(--border-width-rule);
+    --type-underline-offset: 3px;
+
+    --color-ink-primary: #1D1D1D;
+    --color-ink-secondary: #4D4D4D;
+    --color-ink-tertiary: #6A6A6A;
+    --color-ink-on-inverse: #FFFFFF;
+    --color-surface-page: #FFFFFF;
+    --color-surface-recessed: #F4F4F4;
+    --color-surface-inverse: var(--color-ink-primary);
+    --color-surface-ground-photo: #EFEFEF;
+    --color-surface-fabric-surround-book: #F7F7F7;
+    --color-surface-fabric-surround-assessment: #949494;
+    --color-surface-fabric-surround-room: #3D3D3D;
+    --color-line-hairline: #D3D3D3;
+    --color-line-rule: #858585;
+    --color-line-strong: var(--color-ink-primary);
+    --color-focus-inner: var(--color-ink-primary);
+    --color-focus-outer: var(--color-surface-page);
+    --color-alert-ink: #8C2F22;
+    --color-thread-base: var(--color-ink-primary);
+    --color-thread-on-dark: var(--color-ink-on-inverse);
+
+    --state-hover-surface: var(--color-surface-recessed);
+    --state-hover-ink-fill: #333333;
+    --state-pressed-ink-fill: #000000;
+    --state-pending-ink-fill: #565656;
+    --state-selected-mark-size: 10px;
+    --state-selected-mark-color: var(--color-ink-primary);
+    --state-selected-label-weight: var(--type-weight-semibold);
+
+    --space-100: 4px;
+    --space-200: 8px;
+    --space-300: 12px;
+    --space-400: 16px;
+    --space-600: 24px;
+    --space-800: 32px;
+    --space-1200: 48px;
+    --space-1600: 64px;
+    --space-2400: 96px;
+    --space-3200: 128px;
+    --space-field: var(--space-200);
+    --space-row: var(--space-300);
+    --space-block: var(--space-600);
+    --space-section: var(--space-1200);
+    --space-chapter: var(--space-2400);
+    --space-gutter: var(--space-600);
+
+    --layout-breakpoint-compact: 0px;
+    --layout-breakpoint-medium: 600px;
+    --layout-breakpoint-regular: 1024px;
+    --layout-breakpoint-wide: 1440px;
+    --layout-columns-compact: 4;
+    --layout-columns-medium: 8;
+    --layout-columns-regular: 12;
+    --layout-columns-wide: 12;
+    --layout-margin-compact: var(--space-600);
+    --layout-margin-medium: var(--space-800);
+    --layout-margin-regular: var(--space-1200);
+    --layout-margin-wide: var(--space-1600);
+    --layout-max-width-page: 1280px;
+    --layout-max-width-ledger: 720px;
+    --layout-max-width-controls: 400px;
+    --layout-max-width-login: 360px;
+    --layout-max-width-macro-swatch: 560px;
+    --layout-measure-prose: 58ch;
+    --layout-target-min: 44px;
+    --layout-swatch-tile-columns-compact: 2;
+    --layout-swatch-tile-columns-medium: 3;
+    --layout-swatch-tile-columns-regular: 4;
+    --layout-swatch-tile-columns-wide: 4;
+    --layout-swatch-tile-aspect-compact: 1;
+    --layout-swatch-tile-aspect-medium: 1.25;
+    --layout-swatch-tile-aspect-regular: 1.25;
+    --layout-swatch-tile-aspect-wide: 1.25;
+    --layout-fabric-hero-min-area-ratio: 0.6;
+    --layout-fabric-hero-viewport-min-area-ratio: 0.6;
+    --layout-fabric-hero-viewport-compact-height: 55%;
+    --layout-surround-band-cloth: var(--space-600);
+    --layout-surround-band-macro: var(--space-1200);
+
+    --radius-none: 0px;
+    --radius-control: 10px;
+
+    --border-width-hairline: 1px;
+    --border-width-rule: 1px;
+    --border-width-emphasis: 2px;
+
+    --focus-width-inner: 2px;
+    --focus-width-outer: 2px;
+    --focus-offset: 2px;
+    --focus-radius: 12px;
+
+    --icon-size: 20px;
+    --icon-stroke-width: 1.5px;
+
+    --control-button-height: 48px;
+    --control-button-padding-x: var(--space-600);
+    --control-button-radius: var(--radius-control);
+    --control-button-primary-fill: var(--color-surface-inverse);
+    --control-button-primary-fill-hover: var(--state-hover-ink-fill);
+    --control-button-primary-fill-pressed: var(--state-pressed-ink-fill);
+    --control-button-primary-fill-pending: var(--state-pending-ink-fill);
+    --control-button-primary-label: var(--color-ink-on-inverse);
+    --control-button-secondary-border-color: var(--color-line-rule);
+    --control-button-secondary-border-width: var(--border-width-rule);
+    --control-button-secondary-label: var(--color-ink-primary);
+    --control-input-height: 48px;
+    --control-input-padding-x: var(--space-300);
+    --control-input-radius: var(--radius-control);
+    --control-input-border-color: var(--color-line-rule);
+    --control-input-border-color-focus: var(--color-ink-primary);
+    --control-input-border-width: var(--border-width-rule);
+    --control-input-background: var(--color-surface-page);
+    --control-input-placeholder-color: var(--color-ink-tertiary);
+    --control-input-label-gap: var(--space-field);
+    --control-input-error-rule-width: var(--border-width-emphasis);
+    --control-input-error-rule-color: var(--color-alert-ink);
+    --control-radio-size: 20px;
+    --control-radio-color: var(--color-ink-primary);
+    --control-radio-gap: var(--space-400);
+    --control-row-ledger-height: var(--layout-target-min);
+    --control-row-table-height: 40px;
+    --control-login-optical-top-ratio: 0.38;
+
+    --motion-duration-instant: 0ms;
+    --motion-duration-acknowledge: 90ms;
+    --motion-duration-settle: 160ms;
+    --motion-duration-enter: 240ms;
+    --motion-duration-exit: 140ms;
+    --motion-easing-settle: cubic-bezier(0.35, 0, 0.15, 1);
+    --motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+    --motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+    --motion-threshold-silent: 120ms;
+    --motion-threshold-skeleton-min: 200ms;
+    --motion-threshold-price-hold: 600ms;
+    --motion-threshold-slow: 5000ms;
+    --motion-garment-rotation-gain-deg-per-px: 0.3;
+    --motion-garment-rotation-gain-clamp-deg-min: 120;
+    --motion-garment-rotation-gain-clamp-deg-max: 240;
+    --motion-garment-inertia-damping: 0.92;
+    --motion-garment-inertia-damping-frame-ms: 16.67;
+    --motion-garment-inertia-max-velocity-deg-per-sec: 220;
+    --motion-garment-inertia-stop-threshold-deg-per-sec: 8;
+    --motion-garment-inertia-sample-window-ms: 60;
+    --motion-garment-zoom-min: 1;
+    --motion-garment-zoom-max: 2;
+    --motion-garment-zoom-wheel-step: 0.12;
+    --motion-garment-axis-lock-threshold-px: 12px;
+    --motion-garment-axis-lock-dominance-ratio: 2;
+
+    --z-base: 0;
+    --z-raised: 1;
+    --z-chrome: 10;
+    --z-focus-ring: 20;
+  }
+
+  @media (max-width: 599px) {
+    :root {
+      --type-size-500: 24px;
+      --type-size-600: 32px;
+      --type-line-height-500: 31px;
+      --type-line-height-600: 35px;
+      --layout-fabric-hero-min-area-ratio: 0.5;
+    }
+  }
+
+  [data-density="back-office"] {
+    --space-block: var(--space-400);
+    --space-section: var(--space-800);
+    --space-chapter: var(--space-1200);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --motion-duration-instant: 0ms;
+      --motion-duration-acknowledge: 0ms;
+      --motion-duration-settle: 0ms;
+      --motion-duration-enter: 0ms;
+      --motion-duration-exit: 0ms;
+    }
+  }
+
+
+  .type-role-wordmark {
+    font-family: var(--font-family-serif-stack);
+    font-size: var(--type-size-400);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-400);
+    letter-spacing: var(--type-tracking-caps);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-page-title {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-600);
+    font-weight: var(--type-weight-semibold);
+    line-height: var(--type-line-height-600);
+    letter-spacing: var(--type-tracking-display);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-section-title {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-500);
+    font-weight: var(--type-weight-semibold);
+    line-height: var(--type-line-height-500);
+    letter-spacing: var(--type-tracking-tight);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-block-title {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-400);
+    font-weight: var(--type-weight-semibold);
+    line-height: var(--type-line-height-400);
+    letter-spacing: var(--type-tracking-tight);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-body {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-300);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-300);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-body-strong {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-300);
+    font-weight: var(--type-weight-medium);
+    line-height: var(--type-line-height-300);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-supporting {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-300);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-300);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-secondary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-fact {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-200);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-200);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-secondary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-fact-emphasis {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-200);
+    font-weight: var(--type-weight-medium);
+    line-height: var(--type-line-height-200);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-label {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-200);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-200);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-secondary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-record-value {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-400);
+    font-weight: var(--type-weight-medium);
+    line-height: var(--type-line-height-400);
+    letter-spacing: var(--type-tracking-tight);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-eyebrow {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-100);
+    font-weight: var(--type-weight-semibold);
+    line-height: var(--type-line-height-100);
+    letter-spacing: var(--type-tracking-caps);
+    color: var(--color-ink-secondary);
+    text-transform: uppercase;
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-fine {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-100);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-100);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-tertiary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-price-total {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-500);
+    font-weight: var(--type-weight-semibold);
+    line-height: var(--type-line-height-500);
+    letter-spacing: var(--type-tracking-tight);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-price-line {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-300);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-300);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-table-cell {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-200);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-200);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-primary);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-action {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-300);
+    font-weight: var(--type-weight-semibold);
+    line-height: var(--type-line-height-300);
+    letter-spacing: var(--type-tracking-normal);
+    font-variant-numeric: var(--type-figures-default);
+  }
+
+  .type-role-identifier {
+    font-family: var(--font-family-sans-stack);
+    font-size: var(--type-size-200);
+    font-weight: var(--type-weight-regular);
+    line-height: var(--type-line-height-200);
+    letter-spacing: var(--type-tracking-wide);
+    color: var(--color-ink-secondary);
+    font-variant-numeric: var(--type-figures-identifier);
+  }
+
+  .type-role-link {
+    font-weight: var(--type-weight-regular);
+    letter-spacing: var(--type-tracking-normal);
+    color: var(--color-ink-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--type-underline-color);
+    text-decoration-thickness: var(--type-underline-thickness);
+    text-underline-offset: var(--type-underline-offset);
+  }
+  .type-role-link:hover { text-decoration-color: var(--type-underline-color-hover); }
+
+  @media print {
+    :root {
+      --color-surface-page: #FFFFFF;
+      --color-ink-primary: #000000;
+      --color-ink-secondary: #000000;
+      --color-line-hairline: #000000;
+      --color-line-rule: #000000;
+      --color-line-strong: #000000;
+      --color-print-paper: #FFFFFF;
+      --color-print-ink: #000000;
+      --print-rule-width: 0.5pt;
+      --print-size-body: 10pt;
+      --print-size-table: 9pt;
+      --print-size-value: 11pt;
+    }
+  }
+}
